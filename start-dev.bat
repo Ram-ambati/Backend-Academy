@@ -46,8 +46,8 @@ if not exist "%FRONTEND_DIR%\node_modules" (
 )
 
 echo Starting backend and frontend in separate terminals...
-start "Backend - Backend Academy" cmd /k "cd /d \"%BACKEND_DIR%\" && call mvnw.cmd spring-boot:run"
-start "Frontend - Backend Academy" cmd /k "cd /d \"%FRONTEND_DIR%\" && npm run dev"
+start "Backend - Backend Academy" cmd /k "pushd \"%BACKEND_DIR%\" && call \"%BACKEND_WRAPPER%\" spring-boot:run"
+start "Frontend - Backend Academy" cmd /k "pushd \"%FRONTEND_DIR%\" && npm run dev"
 
 echo Done.
 exit /b 0
