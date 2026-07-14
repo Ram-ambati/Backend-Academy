@@ -2,6 +2,9 @@
 setlocal EnableExtensions
 
 set "ROOT_DIR=%~dp0"
+if "%JAVA_HOME%"=="C:\Program Files\Java\jdk-21\bin\javac.exe" (
+    set "JAVA_HOME=C:\Program Files\Java\jdk-21"
+)
 set "BACKEND_DIR=%ROOT_DIR%backend"
 set "FRONTEND_DIR=%ROOT_DIR%frontend"
 set "BACKEND_WRAPPER=%BACKEND_DIR%\mvnw.cmd"

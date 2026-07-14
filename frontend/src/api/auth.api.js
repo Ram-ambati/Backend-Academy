@@ -1,33 +1,67 @@
+import api from './axios';
+
 /**
- * Mock Auth API
+ * Real Auth API calling Spring Boot backend
  */
 
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
 export const login = async (email, password) => {
-  await delay(800);
-  
-  if (email === 'admin@test.com' && password === 'password') {
-    return { token: 'mock-admin-token', user: { id: 1, name: 'Super Admin', email, role: 'ADMIN' } };
+  try {
+    const response = await api.post('/api/v1/auth/login', { email, password });
+    // Map response structure to frontend's expected properties:
+    // { token, user } where token is accessToken
+    return {
+      token: response.data.accessToken,
+      refreshToken: response.data.refreshToken,
+      user: response.data.user
+    };
+  } catch (error) {
+    const message = error.response?.data?.message || 'Invalid email or password';
+    throw new Error(message);
   }
-  
-  if (email === 'instructor@test.com' && password === 'password') {
-    return { token: 'mock-instructor-token', user: { id: 2, name: 'Dr. John Doe', email, role: 'INSTRUCTOR', initials: 'JD' } };
-  }
-  
-  if (email === 'student@test.com' && password === 'password') {
-    return { token: 'mock-student-token', user: { id: 3, name: 'Ram Ambati', email, role: 'STUDENT', initials: 'RA' } };
-  }
-  
-  throw new Error('Invalid email or password');
 };
 
 export const registerStudent = async (data) => {
-  await delay(1000);
-  return { token: 'mock-student-token', user: { id: 4, name: data.name, email: data.email, role: 'STUDENT', initials: data.name.substring(0, 2).toUpperCase() } };
+  try {
+    // Map frontend's experience select value to experienceLevel in the API contract
+    const payload = {
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      experienceLevel: data.experience,
+      faculty: data.faculty
+    };
+    const response = await api.post('/api/v1/auth/register/student', payload);
+    return {
+      token: response.data.accessToken,
+      refreshToken: response.data.refreshToken,
+      user: response.data.user
+    };
+  } catch (error) {
+    const message = error.response?.data?.message || 'Registration failed';
+    throw new Error(message);
+  }
 };
 
 export const registerInstructor = async (data) => {
-  await delay(1000);
-  return { token: 'mock-instructor-token', user: { id: 5, name: data.name, email: data.email, role: 'INSTRUCTOR', initials: data.name.substring(0, 2).toUpperCase() } };
+  try {
+    const response = await api.post('/api/v1/auth/register/instructor', data);
+    return {
+      token: response.data.accessToken,
+      refreshToken: response.data.refreshToken,
+      user: response.data.user
+    };
+  } catch (error) {
+    const message = error.response?.data?.message || 'Registration failed';
+    throw new Error(message);
+  }
+};
+
+export const getMe = async () => {
+  const response = await api.get('/api/v1/auth/me');
+  return response.data;
+};
+
+export const refresh = async (refreshToken) => {
+  const response = await api.post('/api/v1/auth/refresh', { refreshToken });
+  return response.data;
 };
