@@ -1,7 +1,7 @@
 package com.backendacademy.backend.entity;
 
-import com.backendacademy.backend.dto.EducationLevel;
-import com.backendacademy.backend.dto.Role;
+import com.backendacademy.backend.enums.EducationLevel;
+import com.backendacademy.backend.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

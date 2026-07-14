@@ -1,7 +1,7 @@
 package com.backendacademy.backend.entity;
 
-import com.backendacademy.backend.dto.AccountStatus;
-import com.backendacademy.backend.dto.Role;
+import com.backendacademy.backend.enums.AccountStatus;
+import com.backendacademy.backend.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

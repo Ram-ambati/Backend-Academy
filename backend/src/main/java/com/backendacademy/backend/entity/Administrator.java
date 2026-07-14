@@ -1,6 +1,6 @@
 package com.backendacademy.backend.entity;
 
-import com.backendacademy.backend.dto.Role;
+import com.backendacademy.backend.enums.Role;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

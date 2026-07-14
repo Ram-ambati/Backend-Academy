@@ -1,4 +1,4 @@
-package com.backendacademy.backend.dto;
+package com.backendacademy.backend.enums;
 
 public enum Role {
     STUDENT, INSTRUCTOR, ADMIN
