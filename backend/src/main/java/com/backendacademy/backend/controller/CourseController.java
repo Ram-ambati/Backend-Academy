@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 /**
- * Placeholder controller to demonstrate RBAC and Method Security.
- * To be fully implemented in Issue #4.
+ * Course endpoints with RBAC gates applied.
+ * Business logic (CRUD, ownership checks) will be implemented once
+ * the Course entity and CourseService are built. Ownership enforcement
+ * will use ForbiddenException in the service layer.
  */
 @RestController
 @RequestMapping("/api/v1/courses")

@@ -63,9 +63,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         List<String> details = ex.getBindingResult().getAllErrors().stream()
                 .map(error -> {
-                    String field = ((FieldError) error).getField();
-                    String message = error.getDefaultMessage();
-                    return field + ": " + message;
+                    if (error instanceof FieldError fieldError) {
+                        return fieldError.getField() + ": " + fieldError.getDefaultMessage();
+                    }
+                    return error.getObjectName() + ": " + error.getDefaultMessage();
                 })
                 .toList();
 
