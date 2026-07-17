@@ -91,7 +91,7 @@ public class AuthControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.error", is("Conflict")))
+                .andExpect(jsonPath("$.errorCode", is("DUPLICATE_RESOURCE")))
                 .andExpect(jsonPath("$.message", containsString("Email is already registered")));
     }
 
@@ -125,7 +125,7 @@ public class AuthControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.error", is("Unauthorized")))
+                .andExpect(jsonPath("$.errorCode", is("UNAUTHORIZED")))
                 .andExpect(jsonPath("$.message", containsString("Invalid email or password")));
     }
 
@@ -151,8 +151,8 @@ public class AuthControllerTests {
     }
 
     @Test
-    void testGetMeWithoutTokenReturns403() throws Exception {
+    void testGetMeWithoutTokenReturns401() throws Exception {
         mockMvc.perform(get("/api/v1/auth/me"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 }
