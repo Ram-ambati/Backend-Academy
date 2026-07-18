@@ -9,7 +9,6 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name = "administrators")
 @DiscriminatorValue("ADMIN")
 @Getter
 @Setter

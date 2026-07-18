@@ -3,17 +3,14 @@ package com.backendacademy.backend.entity;
 import com.backendacademy.backend.enums.EducationLevel;
 import com.backendacademy.backend.enums.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
-@Builder
+@SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
-@Table(name = "students")
 @DiscriminatorValue("STUDENT")
 public class Student extends User {
     @Column(unique = true)
