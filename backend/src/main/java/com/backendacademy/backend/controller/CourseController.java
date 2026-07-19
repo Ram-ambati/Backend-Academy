@@ -29,12 +29,14 @@ public class CourseController {
         return ResponseEntity.ok(Map.of("message", "List of all courses. Accessible by anyone authenticated."));
     }
     // --- NEW ENDPOINT 1: Get Single Course ---
+	@Operation(summary = "Get a course by ID")
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, String>> getCourseById(@PathVariable Long id) {
         return ResponseEntity.ok(Map.of("message", "Single course details. Accessible by anyone authenticated (if published)."));
     }
 
     // --- NEW ENDPOINT 2: Instructor Dashboard ---
+	@Operation(summary = "Get courses for current instructor")
     @GetMapping("/my")
     @PreAuthorize("hasRole('INSTRUCTOR')")
     public ResponseEntity<Map<String, String>> getMyCourses() {
@@ -58,6 +60,7 @@ public class CourseController {
     }
 
     // --- NEW ENDPOINT 3: The State Machine Transition ---
+	@Operation(summary = "Publish a course")
     @PatchMapping("/{id}/publish")
     @PreAuthorize("hasAnyRole('INSTRUCTOR', 'ADMIN')")
     public ResponseEntity<Map<String, String>> publishCourse(@PathVariable Long id) {

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Tag(
 	    name = "1. Authentication",
-	    description = "Endpoints for user registration, login, token refresh, and retrieving authenticated user information."
+	    description = "Endpoints for user registration, login, and session management"
 	)
 public class AuthController {
 	
