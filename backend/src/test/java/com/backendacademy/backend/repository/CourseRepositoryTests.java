@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,12 +83,12 @@ public class CourseRepositoryTests {
 
         courseRepository.saveAll(List.of(course1, course2, course3));
 
-        List<Course> instructor1Courses = courseRepository.findByInstructorId(instructor1.getId());
+        List<Course> instructor1Courses = courseRepository.findByInstructorId(instructor1.getId(), PageRequest.of(0, 10)).getContent();
         assertThat(instructor1Courses).hasSize(2);
         assertThat(instructor1Courses).extracting(Course::getTitle)
                 .containsExactlyInAnyOrder("Spring Boot for Beginners", "Advanced Spring Boot");
 
-        List<Course> instructor2Courses = courseRepository.findByInstructorId(instructor2.getId());
+        List<Course> instructor2Courses = courseRepository.findByInstructorId(instructor2.getId(), PageRequest.of(0, 10)).getContent();
         assertThat(instructor2Courses).hasSize(1);
         assertThat(instructor2Courses.get(0).getTitle()).isEqualTo("Intro to React");
     }
@@ -112,11 +113,11 @@ public class CourseRepositoryTests {
 
         courseRepository.saveAll(List.of(course1, course2));
 
-        List<Course> draftCourses = courseRepository.findByStatus(CourseStatus.DRAFT);
+        List<Course> draftCourses = courseRepository.findByStatus(CourseStatus.DRAFT, PageRequest.of(0, 10)).getContent();
         assertThat(draftCourses).hasSize(1);
         assertThat(draftCourses.get(0).getTitle()).isEqualTo("Course 1");
 
-        List<Course> publishedCourses = courseRepository.findByStatus(CourseStatus.PUBLISHED);
+        List<Course> publishedCourses = courseRepository.findByStatus(CourseStatus.PUBLISHED, PageRequest.of(0, 10)).getContent();
         assertThat(publishedCourses).hasSize(1);
         assertThat(publishedCourses.get(0).getTitle()).isEqualTo("Course 2");
     }
@@ -149,7 +150,7 @@ public class CourseRepositoryTests {
 
         courseRepository.saveAll(List.of(course1, course2, course3));
 
-        List<Course> springBootCourses = courseRepository.findByCategoryIgnoreCase("SPRING BOOT");
+        List<Course> springBootCourses = courseRepository.findByCategoryIgnoreCase("SPRING BOOT", PageRequest.of(0, 10)).getContent();
         assertThat(springBootCourses).hasSize(2);
         assertThat(springBootCourses).extracting(Course::getTitle)
                 .containsExactlyInAnyOrder("Course 1", "Course 2");
