@@ -85,7 +85,9 @@ public class CourseRepositoryTests {
 
         List<Course> instructor1Courses = courseRepository.findByInstructorId(instructor1.getId(), PageRequest.of(0, 10)).getContent();
         assertThat(instructor1Courses).hasSize(2);
-        assertThat(instructor1Courses).extracting(Course::getTitle)
+        // Using lambda instead of Course::getTitle to avoid null-type-safety warning.
+        // AssertJ's extracting() expects @NonNull generic types, but JPA returns unannotated generics,
+        assertThat(instructor1Courses).extracting(course -> course.getTitle())
                 .containsExactlyInAnyOrder("Spring Boot for Beginners", "Advanced Spring Boot");
 
         List<Course> instructor2Courses = courseRepository.findByInstructorId(instructor2.getId(), PageRequest.of(0, 10)).getContent();
@@ -152,7 +154,8 @@ public class CourseRepositoryTests {
 
         List<Course> springBootCourses = courseRepository.findByCategoryIgnoreCase("SPRING BOOT", PageRequest.of(0, 10)).getContent();
         assertThat(springBootCourses).hasSize(2);
-        assertThat(springBootCourses).extracting(Course::getTitle)
+        // Lambda used instead of Course::getTitle to avoid null-type-safety unchecked conversion warning
+        assertThat(springBootCourses).extracting(course -> course.getTitle())
                 .containsExactlyInAnyOrder("Course 1", "Course 2");
     }
 
