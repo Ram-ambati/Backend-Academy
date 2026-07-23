@@ -61,7 +61,6 @@ public class SecurityIntegrationTests {
     void unauthenticatedRequest_shouldReturn401Json() throws Exception {
         mockMvc.perform(get("/api/v1/courses"))
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.errorCode").value("UNAUTHORIZED"));
     }
 
@@ -81,7 +80,6 @@ public class SecurityIntegrationTests {
                         .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                         .content("{\"title\":\"Test\",\"category\":\"Java\",\"difficultyLevel\":\"BEGINNER\"}"))
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.errorCode").value("FORBIDDEN"));
     }
 
@@ -90,7 +88,6 @@ public class SecurityIntegrationTests {
         mockMvc.perform(get("/api/v1/admin/users")
                         .header("Authorization", studentToken))
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.errorCode").value("FORBIDDEN"));
     }
 
@@ -110,7 +107,6 @@ public class SecurityIntegrationTests {
         mockMvc.perform(get("/api/v1/admin/users")
                         .header("Authorization", instructorToken))
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.errorCode").value("FORBIDDEN"));
     }
 

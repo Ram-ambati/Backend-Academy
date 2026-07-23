@@ -1,5 +1,7 @@
 package com.backendacademy.backend.config;
 
+import com.backendacademy.backend.model.dto.ErrorResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
@@ -8,7 +10,6 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 /**
  * Returns a clean JSON 401 response when an unauthenticated user
@@ -16,6 +17,8 @@ import java.time.LocalDateTime;
  */
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
+    private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
 
     @Override
     public void commence(HttpServletRequest request,
@@ -26,15 +29,11 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
 
-        String json = """
-                {
-                  "success": false,
-                  "message": "Unauthorized — you must provide a valid JWT token",
-                  "errorCode": "UNAUTHORIZED",
-                  "timestamp": "%s"
-                }
-                """.formatted(LocalDateTime.now());
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("UNAUTHORIZED")
+                .message("Unauthorized — you must provide a valid JWT token")
+                .build();
 
-        response.getWriter().write(json);
+        objectMapper.writeValue(response.getWriter(), errorResponse);
     }
 }
