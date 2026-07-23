@@ -77,7 +77,9 @@ public class SecurityIntegrationTests {
     @Test
     void student_cannotAccessInstructorEndpoint() throws Exception {
         mockMvc.perform(post("/api/v1/courses")
-                        .header("Authorization", studentToken))
+                        .header("Authorization", studentToken)
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Test\",\"category\":\"Java\",\"difficultyLevel\":\"BEGINNER\"}"))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.errorCode").value("FORBIDDEN"));
@@ -97,8 +99,10 @@ public class SecurityIntegrationTests {
     @Test
     void instructor_canAccessInstructorEndpoint() throws Exception {
         mockMvc.perform(post("/api/v1/courses")
-                        .header("Authorization", instructorToken))
-                .andExpect(status().isOk());
+                        .header("Authorization", instructorToken)
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Test\",\"category\":\"Java\",\"difficultyLevel\":\"BEGINNER\"}"))
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -122,7 +126,9 @@ public class SecurityIntegrationTests {
     @Test
     void admin_canAccessInstructorEndpoint() throws Exception {
         mockMvc.perform(post("/api/v1/courses")
-                        .header("Authorization", adminToken))
-                .andExpect(status().isOk());
+                        .header("Authorization", adminToken)
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Test\",\"category\":\"Java\",\"difficultyLevel\":\"BEGINNER\"}"))
+                .andExpect(status().isCreated());
     }
 }

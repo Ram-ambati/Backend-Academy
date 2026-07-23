@@ -1,76 +1,87 @@
 package com.backendacademy.backend.controller;
 
+import com.backendacademy.backend.controller.docs.CourseApiDocs;
+import com.backendacademy.backend.model.User;
+import com.backendacademy.backend.model.dto.CourseResponse;
+import com.backendacademy.backend.model.dto.CreateCourseRequest;
+import com.backendacademy.backend.model.dto.PagedResponse;
+import com.backendacademy.backend.model.dto.UpdateCourseRequest;
+import com.backendacademy.backend.service.CourseService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-
-import java.util.Map;
-
-/**
- * Course endpoints with RBAC gates applied.
- * Business logic (CRUD, ownership checks) will be implemented once
- * the Course entity and CourseService are built. Ownership enforcement
- * will use ForbiddenException in the service layer.
- */
 @RestController
 @RequestMapping("/api/v1/courses")
-@Tag(
-	    name = "2. Courses",
-	    description = "Endpoints for creating, managing, and discovering courses"
-	)
-public class CourseController {
+@RequiredArgsConstructor
+public class CourseController implements CourseApiDocs {
 
-	@Operation(summary = "Get all courses")
-    @GetMapping
-    public ResponseEntity<Map<String, String>> getAllCourses() {
-        return ResponseEntity.ok(Map.of("message", "List of all courses. Accessible by anyone authenticated."));
-    }
-    // --- NEW ENDPOINT 1: Get Single Course ---
-	@Operation(summary = "Get a course by ID")
-    @GetMapping("/{id}")
-    public ResponseEntity<Map<String, String>> getCourseById(@PathVariable Long id) {
-        return ResponseEntity.ok(Map.of("message", "Single course details. Accessible by anyone authenticated (if published)."));
-    }
+    private final CourseService courseService;
 
-    // --- NEW ENDPOINT 2: Instructor Dashboard ---
-	@Operation(summary = "Get courses for current instructor")
-    @GetMapping("/my")
-    @PreAuthorize("hasRole('INSTRUCTOR')")
-    public ResponseEntity<Map<String, String>> getMyCourses() {
-        return ResponseEntity.ok(Map.of("message", "List of courses owned by the current instructor."));
-    }
-
-	@Operation(summary = "Create a new Course")
+    @Override
     @PostMapping
     @PreAuthorize("hasAnyRole('INSTRUCTOR', 'ADMIN')")
-    public ResponseEntity<Map<String, String>> createCourse() {
-        return ResponseEntity.ok(Map.of("message", "Course created. Accessible only by INSTRUCTOR or ADMIN."));
+    public ResponseEntity<CourseResponse> createCourse(
+            @Valid @RequestBody CreateCourseRequest request,
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(courseService.createCourse(request, user));
     }
 
-	@Operation(summary = "Update an existing course")
+    @Override
+    @GetMapping
+    public ResponseEntity<PagedResponse<CourseResponse>> getAllCourses(Pageable pageable) {
+        return ResponseEntity.ok(courseService.getAllPublishedCourses(pageable));
+    }
+
+    @Override
+    @GetMapping("/{id}")
+    public ResponseEntity<CourseResponse> getCourseById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(courseService.getCourseById(id, user));
+    }
+
+    @Override
+    @GetMapping("/my")
+    @PreAuthorize("hasRole('INSTRUCTOR')")
+    public ResponseEntity<PagedResponse<CourseResponse>> getMyCourses(
+            @AuthenticationPrincipal User user,
+            Pageable pageable) {
+        return ResponseEntity.ok(courseService.getMyCourses(user, pageable));
+    }
+
+    @Override
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('INSTRUCTOR', 'ADMIN')")
-    public ResponseEntity<Map<String, String>> updateCourse(@PathVariable Long id) {
-        // Note: A service-layer check would go here to ensure an INSTRUCTOR
-        // is only updating their OWN course, using ForbiddenException.
-        return ResponseEntity.ok(Map.of("message", "Course updated. Accessible only by INSTRUCTOR or ADMIN."));
+    public ResponseEntity<CourseResponse> updateCourse(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateCourseRequest request,
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(courseService.updateCourse(id, request, user));
     }
 
-    // --- NEW ENDPOINT 3: The State Machine Transition ---
-	@Operation(summary = "Publish a course")
-    @PatchMapping("/{id}/publish")
-    @PreAuthorize("hasAnyRole('INSTRUCTOR', 'ADMIN')")
-    public ResponseEntity<Map<String, String>> publishCourse(@PathVariable Long id) {
-        return ResponseEntity.ok(Map.of("message", "Course published. Validates readiness criteria before state change."));
-    }
-
-	@Operation(summary = "Delete a course")
+    @Override
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('INSTRUCTOR', 'ADMIN')")
-    public ResponseEntity<Map<String, String>> deleteCourse(@PathVariable Long id) {
-        return ResponseEntity.ok(Map.of("message", "Course deleted. Accessible only by INSTRUCTOR or ADMIN."));
+    public ResponseEntity<Void> deleteCourse(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user) {
+        courseService.deleteCourse(id, user);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    @PatchMapping("/{id}/publish")
+    @PreAuthorize("hasAnyRole('INSTRUCTOR', 'ADMIN')")
+    public ResponseEntity<CourseResponse> publishCourse(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(courseService.publishCourse(id, user));
     }
 }
