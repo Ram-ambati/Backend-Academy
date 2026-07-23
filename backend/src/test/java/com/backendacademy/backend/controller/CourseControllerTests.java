@@ -401,4 +401,41 @@ public class CourseControllerTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode", is("VALIDATION_ERROR")));
     }
+
+    // ── Test 15: Non-owner gets 404 for ARCHIVED course ───────
+
+    @Test
+    void testNonOwnerGets404ForArchivedCourse() throws Exception {
+        Course course = courseRepository.save(Course.builder()
+                .title("Archived Course")
+                .category("Java")
+                .difficultyLevel(DifficultyLevel.BEGINNER)
+                .status(CourseStatus.ARCHIVED)
+                .instructor(instructor1)
+                .build());
+
+        mockMvc.perform(get("/api/v1/courses/" + course.getId())
+                        .header("Authorization", "Bearer " + studentToken))
+                .andExpect(status().isNotFound());
+    }
+
+    // ── Test 16: Publishing an already PUBLISHED course fails ──
+
+    @Test
+    void testPublishAlreadyPublishedCourseFails() throws Exception {
+        Course course = courseRepository.save(Course.builder()
+                .title("Already Published")
+                .description("Valid description")
+                .category("Java")
+                .difficultyLevel(DifficultyLevel.BEGINNER)
+                .status(CourseStatus.PUBLISHED)
+                .instructor(instructor1)
+                .build());
+
+        mockMvc.perform(patch("/api/v1/courses/" + course.getId() + "/publish")
+                        .header("Authorization", "Bearer " + instructor1Token))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode", is("BAD_REQUEST")))
+                .andExpect(jsonPath("$.message", containsString("already published")));
+    }
 }

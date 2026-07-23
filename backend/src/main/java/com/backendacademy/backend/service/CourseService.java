@@ -1,5 +1,6 @@
 package com.backendacademy.backend.service;
 
+import com.backendacademy.backend.exception.BadRequestException;
 import com.backendacademy.backend.exception.ForbiddenException;
 import com.backendacademy.backend.exception.ResourceNotFoundException;
 import com.backendacademy.backend.model.Course;
@@ -49,8 +50,8 @@ public class CourseService {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + id));
 
-        // Contextual read authorization: hide DRAFT courses from non-owners
-        if (course.getStatus() == CourseStatus.DRAFT) {
+        // Contextual read authorization: hide non-PUBLISHED courses from non-owners
+        if (course.getStatus() != CourseStatus.PUBLISHED) {
             boolean isOwner = course.getInstructor().getId().equals(currentUser.getId());
             boolean isAdmin = currentUser.getRole() == Role.ADMIN;
             if (!isOwner && !isAdmin) {
@@ -146,9 +147,14 @@ public class CourseService {
 
         enforceOwnership(course, currentUser);
 
+        // State transition guard: Fail fast if already published
+        if (course.getStatus() == CourseStatus.PUBLISHED) {
+            throw new BadRequestException("Course is already published");
+        }
+
         // Publish readiness validation
         if (course.getDescription() == null || course.getDescription().isBlank()) {
-            throw new IllegalArgumentException("Course must have a description before publishing");
+            throw new BadRequestException("Course must have a description before publishing");
         }
 
         course.setStatus(CourseStatus.PUBLISHED);

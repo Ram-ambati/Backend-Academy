@@ -1,5 +1,6 @@
 package com.backendacademy.backend.controller;
 
+import com.backendacademy.backend.exception.BadRequestException;
 import com.backendacademy.backend.exception.EmailAlreadyExistsException;
 import com.backendacademy.backend.exception.ForbiddenException;
 import com.backendacademy.backend.exception.InvalidRefreshTokenException;
@@ -73,7 +74,12 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", "Validation failed", details);
     }
 
-    // ── 400 IllegalArgument (e.g. publish readiness) ──
+    // ── 400 Bad Request ───────────────────────────────
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Map<String, Object>> handleBadRequest(BadRequestException ex) {
+        return buildResponse(HttpStatus.BAD_REQUEST, "BAD_REQUEST", ex.getMessage(), null);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
         return buildResponse(HttpStatus.BAD_REQUEST, "BAD_REQUEST", ex.getMessage(), null);
