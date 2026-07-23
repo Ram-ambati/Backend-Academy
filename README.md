@@ -43,8 +43,8 @@ Protect all resources in the application.
 
 ### 3) Course Management
 Organize and manage learning content.
-- [ ] Create, update, delete courses
-- [ ] Publish courses
+- [x] Create, update, delete courses
+- [x] Publish courses
 - [ ] Course categories (Spring Boot, REST APIs, Security, Docker, etc.)
 
 ### 4) Weekly Learning Modules
@@ -116,9 +116,9 @@ Track learning outcomes in real time.
 - [ ] API testing
 
 ### 13) Documentation
-- [ ] Swagger / OpenAPI
-- [ ] API documentation
-- [ ] Professional README practices
+- [x] Swagger / OpenAPI
+- [x] API documentation
+- [x] Professional README practices
 
 ### 14) Deployment
 - [ ] Docker
@@ -237,12 +237,60 @@ Track learning outcomes in real time.
 
 ---
 
-## Project Description (Short)
+## 🗂️ Project Issues Roadmap (Sprint Planning)
 
-Backend Academy is an end-to-end learning platform where students master Java backend development by building real project features with secure APIs, structured weekly lessons, and an AI tutor that understands lesson context.
+### 🏗️ Phase 1 — Foundation (10 Issues)
+- [x] 1. Authentication API Contract (`/api/v1/auth/*`)
+- [x] 2. User Role & Permission Matrix (RBAC — `Role` enum, `@PreAuthorize`)
+- [x] 3. User Entity & Database Design (`User.java`, Flyway `V1`, `V2`)
+- [x] 4. Course Entity & Database Design (`Course.java`, Flyway `V3`)
+- [ ] 5. Lesson Entity & Database Design
+- [ ] 6. Enrollment Entity & Progress Design
+- [x] 7. API Response Standard (`PagedResponse<T>`, Raw DTO responses)
+- [x] 8. Error Response Standard (`ErrorResponse`, `GlobalExceptionHandler`)
+- [x] 9. API Naming & URL Convention Review (`/api/v1/*` RESTful standards)
+- [x] 10. Swagger/OpenAPI Planning & Setup (`springdoc-openapi`, Swagger UI)
+
+### 📚 Phase 2 — Course Module (6 Issues)
+- [x] 11. Course CRUD Service & Controller (`CourseService`, ownership enforcement)
+- [ ] 12. Lesson CRUD API
+- [ ] 13. Course Search & Filtering
+- [ ] 14. Pagination & Sorting
+- [ ] 15. Markdown Lesson Format
+- [ ] 16. Code Snippet & Resource Structure
+
+### 🔐 Phase 3 — Authentication & Security (5 Issues)
+- [x] 17. JWT Authentication Flow
+- [x] 18. Spring Security Configuration Plan
+- [x] 19. Protected Route Contract
+- [x] 20. Refresh Token Strategy
+- [ ] 21. Password Reset & Email Verification Flow
+
+### 🤖 Phase 4 — AI Module (5 Issues)
+- [ ] 22. AI Chat API
+- [ ] 23. RAG Context Flow
+- [ ] 24. Conversation History
+- [ ] 25. Prompt & Response Models
+- [ ] 26. AI Error Handling & Rate Limits
+
+### 👤 Phase 5 — User Experience (5 Issues)
+- [ ] 27. Dashboard API
+- [ ] 28. User Profile API
+- [ ] 29. Progress Tracking API
+- [ ] 30. Notifications API
+- [ ] 31. Search API
+
+### 🚀 Phase 6 — Platform (5 Issues)
+- [ ] 32. Health & Version Endpoints
+- [ ] 33. File Upload API
+- [ ] 34. Deployment Configuration
+- [ ] 35. API Documentation Review
+
+
 
 ---
 
 ## Tags / Keywords
 
 `Java` `Spring Boot` `Backend Development` `REST API` `JWT` `Spring Security` `JPA` `Hibernate` `PostgreSQL` `MySQL` `AI Assistant` `LLM` `RAG` `Embeddings` `Vector Search` `EdTech` `Project-Based Learning` `Docker` `Microservices Concepts` `API Testing`
+
