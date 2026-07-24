@@ -1,4 +1,5 @@
 import React from 'react';
+import { Share2, Globe, Code, Video } from 'lucide-react';
 
 const Footer = () => {
   const links = {
@@ -6,6 +7,13 @@ const Footer = () => {
     Learn: ['Spring Boot', 'Database Design', 'REST APIs', 'Security'],
     Company: ['About', 'Blog', 'Careers', 'Contact'],
   };
+
+  const socials = [
+    { icon: Share2, label: 'Share' },
+    { icon: Globe, label: 'Website' },
+    { icon: Code, label: 'Source' },
+    { icon: Video, label: 'Videos' },
+  ];
 
   return (
     <footer className="footer">
@@ -36,12 +44,12 @@ const Footer = () => {
       {/* Bottom Bar */}
       <div className="footer-bottom">
         <span className="footer-copy">
-          © {new Date().getFullYear()} BackendAcademy. All rights reserved.
+          &copy; {new Date().getFullYear()} BackendAcademy. All rights reserved.
         </span>
         <div className="footer-socials">
-          {['𝕏', 'in', '⌥', '▶'].map((icon, i) => (
-            <a key={i} className="footer-social-btn" href="#" aria-label="Social">
-              {icon}
+          {socials.map((social) => (
+            <a key={social.label} className="footer-social-btn" href="#" aria-label={social.label}>
+              <social.icon size={14} />
             </a>
           ))}
         </div>

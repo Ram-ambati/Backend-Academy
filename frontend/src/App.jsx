@@ -19,6 +19,7 @@ import AdminLayout from './layouts/AdminLayout';
 /* === Lazy Loaded Pages === */
 // Public
 const Landing = lazy(() => import('./pages/public/Landing'));
+const AuthPage = lazy(() => import('./pages/public/AuthPage'));
 const Login = lazy(() => import('./pages/public/Login'));
 const RegisterStudent = lazy(() => import('./pages/public/RegisterStudent'));
 const RegisterInstructor = lazy(() => import('./pages/public/RegisterInstructor'));
@@ -26,9 +27,12 @@ const AccessDenied = lazy(() => import('./pages/public/AccessDenied'));
 const NotFound = lazy(() => import('./pages/public/NotFound'));
 
 // Student
+const StudentDashboard = lazy(() => import('./pages/student/StudentDashboard'));
 const Courses = lazy(() => import('./pages/student/Courses'));
 const CourseDetail = lazy(() => import('./pages/student/CourseDetail'));
 const LessonViewer = lazy(() => import('./pages/student/LessonViewer'));
+const AiTutor = lazy(() => import('./pages/student/AiTutor'));
+const ProgressTracker = lazy(() => import('./pages/student/ProgressTracker'));
 
 // Instructor
 const InstructorDashboard = lazy(() => import('./pages/instructor/InstructorDashboard'));
@@ -55,19 +59,29 @@ export default function App() {
             {/* === PUBLIC ROUTES === */}
             <Route element={<PublicLayout />}>
               <Route path="/" element={<Landing />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register/student" element={<RegisterStudent />} />
-              <Route path="/register/instructor" element={<RegisterInstructor />} />
+
+              {/* Auth Portal (unified login + register) */}
+              <Route path="/auth/login" element={<AuthPage />} />
+              <Route path="/auth/register" element={<AuthPage />} />
+
+              {/* Backward-compatible redirects */}
+              <Route path="/login" element={<Navigate to="/auth/login" replace />} />
+              <Route path="/register/student" element={<Navigate to="/auth/register" replace />} />
+              <Route path="/register/instructor" element={<Navigate to="/auth/register" replace />} />
+
               <Route path="/access-denied" element={<AccessDenied />} />
               <Route path="*" element={<NotFound />} />
             </Route>
 
-            {/* === STUDENT ROUTES === */}
-            <Route element={<ProtectedRoute allowedRoles={['STUDENT']} />}>
+            {/* === STUDENT & SHARED ROUTES === */}
+            <Route element={<ProtectedRoute allowedRoles={['STUDENT', 'INSTRUCTOR']} />}>
               <Route element={<AppLayout />}>
+                <Route path="/dashboard" element={<StudentDashboard />} />
                 <Route path="/courses" element={<Courses />} />
                 <Route path="/courses/:courseId" element={<CourseDetail />} />
                 <Route path="/learn/:courseId/:lessonId" element={<LessonViewer />} />
+                <Route path="/ai-tutor" element={<AiTutor />} />
+                <Route path="/progress" element={<ProgressTracker />} />
               </Route>
             </Route>
 
@@ -76,6 +90,7 @@ export default function App() {
               <Route element={<AppLayout />}>
                 <Route path="/instructor" element={<InstructorDashboard />} />
                 <Route path="/instructor/courses/new" element={<CourseBuilder />} />
+                <Route path="/instructor/courses/:id/edit" element={<CourseBuilder />} />
               </Route>
             </Route>
 

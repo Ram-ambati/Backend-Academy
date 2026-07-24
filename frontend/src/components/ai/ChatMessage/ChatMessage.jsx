@@ -1,4 +1,5 @@
 import React from 'react';
+import { Bot } from 'lucide-react';
 
 const ChatMessage = ({
   role = 'ai',      // 'ai' | 'user'
@@ -15,7 +16,7 @@ const ChatMessage = ({
     <div className={`chat-message chat-message--${isUser ? 'user' : 'ai'}`}>
       {/* Avatar */}
       <div className="chat-message-avatar">
-        {isUser ? avatarInitials : '🤖'}
+        {isUser ? avatarInitials : <Bot size={18} />}
       </div>
 
       {/* Bubble */}

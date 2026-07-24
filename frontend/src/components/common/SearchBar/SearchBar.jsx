@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
+import { Search, X } from 'lucide-react';
 
 const SearchBar = ({
-  placeholder = 'Search courses, lessons…',
+  placeholder = 'Search courses, lessons...',
   value: externalValue,
   onChange,
   onSearch,
@@ -31,7 +32,7 @@ const SearchBar = ({
 
   return (
     <div className={`searchbar${size ? ` searchbar--${size}` : ''} ${className}`}>
-      <span className="searchbar-icon">🔍</span>
+      <span className="searchbar-icon"><Search size={16} /></span>
       <input
         ref={inputRef}
         type="search"
@@ -44,7 +45,7 @@ const SearchBar = ({
       />
       {value && (
         <button className="searchbar-clear" onClick={handleClear} aria-label="Clear search">
-          ✕
+          <X size={12} />
         </button>
       )}
     </div>

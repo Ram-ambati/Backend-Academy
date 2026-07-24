@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { AlertTriangle, Eye, EyeOff } from 'lucide-react';
 
 const Input = ({
   label,
@@ -55,7 +56,7 @@ const Input = ({
             tabIndex={-1}
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
-            {showPassword ? '🙈' : '👁️'}
+            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
         )}
         {!isPassword && suffix && (
@@ -65,7 +66,7 @@ const Input = ({
 
       {error && (
         <span className="input-error-msg">
-          <span>⚠</span> {error}
+          <AlertTriangle size={12} /> {error}
         </span>
       )}
       {!error && hint && (

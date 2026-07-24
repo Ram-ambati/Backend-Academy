@@ -1,4 +1,5 @@
 import React from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Pagination = ({
   currentPage = 1,
@@ -35,13 +36,13 @@ const Pagination = ({
         disabled={currentPage === 1}
         aria-label="Previous page"
       >
-        ← Prev
+        <ChevronLeft size={14} /> Prev
       </button>
 
       {/* Page Numbers */}
       {getPageNumbers().map((p, i) =>
         p === '...' ? (
-          <span key={`ellipsis-${i}`} className="pagination-ellipsis">…</span>
+          <span key={`ellipsis-${i}`} className="pagination-ellipsis">&hellip;</span>
         ) : (
           <button
             key={p}
@@ -62,7 +63,7 @@ const Pagination = ({
         disabled={currentPage === totalPages}
         aria-label="Next page"
       >
-        Next →
+        Next <ChevronRight size={14} />
       </button>
 
       {showInfo && (

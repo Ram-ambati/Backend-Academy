@@ -1,4 +1,5 @@
 import React from 'react';
+import { Users, UserCog, BookOpen } from 'lucide-react';
 import Card from '../../components/common/Card/Card';
 import StatisticsCard from '../../components/profile/StatisticsCard/StatisticsCard';
 
@@ -10,9 +11,9 @@ const AdminDashboard = () => {
       </h1>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-        <StatisticsCard label="Total Users" value="8,405" icon="👥" iconColor="gold" trend={{ direction: 'up', label: '+124 this week' }} />
-        <StatisticsCard label="Active Instructors" value="42" icon="👨‍🏫" iconColor="green" />
-        <StatisticsCard label="Total Courses" value="156" icon="📚" iconColor="pink" trend={{ direction: 'up', label: '+3 this week' }} />
+        <StatisticsCard label="Total Users" value="8,405" icon={<Users size={20} />} iconColor="gold" trend={{ direction: 'up', label: '+124 this week' }} />
+        <StatisticsCard label="Active Instructors" value="42" icon={<UserCog size={20} />} iconColor="green" />
+        <StatisticsCard label="Total Courses" value="156" icon={<BookOpen size={20} />} iconColor="pink" trend={{ direction: 'up', label: '+3 this week' }} />
       </div>
 
       <Card style={{ padding: '2rem' }}>

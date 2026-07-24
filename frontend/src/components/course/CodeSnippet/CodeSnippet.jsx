@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Copy, Check } from 'lucide-react';
 
 /**
  * Applies basic syntax color classes to common patterns.
@@ -67,7 +68,7 @@ const CodeSnippet = ({
             className={`code-snippet-copy${copied ? ' copied' : ''}`}
             onClick={handleCopy}
           >
-            {copied ? '✓ Copied!' : '⧉ Copy'}
+            {copied ? <><Check size={14} /> Copied!</> : <><Copy size={14} /> Copy</>}
           </button>
         )}
       </div>

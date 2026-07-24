@@ -1,5 +1,6 @@
 import React, { useState, useCallback, createContext, useContext } from 'react';
 import { createPortal } from 'react-dom';
+import { CheckCircle, XCircle, AlertTriangle, Info, X } from 'lucide-react';
 
 /* =============================================
    Toast Context + Hook
@@ -12,19 +13,27 @@ export const useToast = () => {
   return ctx;
 };
 
-const ICONS = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+const ICONS = {
+  success: CheckCircle,
+  error:   XCircle,
+  warning: AlertTriangle,
+  info:    Info,
+};
 
 /* Individual Toast */
-const Toast = ({ toast, onRemove }) => (
-  <div className={`toast toast--${toast.type}`} role="alert">
-    <span className="toast-icon">{ICONS[toast.type]}</span>
-    <div className="toast-body">
-      {toast.title && <div className="toast-title">{toast.title}</div>}
-      {toast.message && <div className="toast-desc">{toast.message}</div>}
+const Toast = ({ toast, onRemove }) => {
+  const IconComponent = ICONS[toast.type] || Info;
+  return (
+    <div className={`toast toast--${toast.type}`} role="alert">
+      <span className="toast-icon"><IconComponent size={18} /></span>
+      <div className="toast-body">
+        {toast.title && <div className="toast-title">{toast.title}</div>}
+        {toast.message && <div className="toast-desc">{toast.message}</div>}
+      </div>
+      <button className="toast-close" onClick={() => onRemove(toast.id)} aria-label="Dismiss"><X size={14} /></button>
     </div>
-    <button className="toast-close" onClick={() => onRemove(toast.id)} aria-label="Dismiss">✕</button>
-  </div>
-);
+  );
+};
 
 /* Toast Provider */
 export const ToastProvider = ({ children }) => {

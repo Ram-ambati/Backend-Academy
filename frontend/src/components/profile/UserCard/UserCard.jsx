@@ -1,58 +1,43 @@
 import React from 'react';
+import { Pencil } from 'lucide-react';
 import Badge from '../../common/Badge/Badge.jsx';
 
 const UserCard = ({
   name = 'Ram Ambati',
-  role = 'Backend Student',
+  email = 'ram@example.com',
+  role = 'Student',
   initials = 'RA',
-  avatarUrl = null,
-  tags = ['Spring Boot', 'Java', 'SQL'],
-  stats = [
-    { label: 'Courses', value: 6 },
-    { label: 'Lessons', value: 48 },
-    { label: 'Streak', value: '12d' },
-  ],
-  onEditProfile,
+  joinDate = '2025-01-15',
+  onEdit,
 }) => {
+  const roleVariant = {
+    Student: 'green',
+    Instructor: 'gold',
+    Admin: 'pink',
+  }[role] || 'gray';
+
+  const formatted = new Date(joinDate).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+
   return (
     <div className="user-card">
-      {/* Banner */}
-      <div className="user-card-banner">
-        <div className="user-card-avatar-wrap">
-          <div className="user-card-avatar">
-            {avatarUrl ? <img src={avatarUrl} alt={name} /> : initials}
-          </div>
-        </div>
-      </div>
-
-      {/* Body */}
-      <div className="user-card-body">
+      <div className="user-card-avatar">{initials}</div>
+      <div className="user-card-info">
         <div className="user-card-name">{name}</div>
-        <div className="user-card-role">{role}</div>
-
-        <div className="user-card-tags">
-          {tags.map((tag) => (
-            <Badge key={tag} variant="gold" size="sm">{tag}</Badge>
-          ))}
+        <div className="user-card-email">{email}</div>
+        <div className="user-card-meta">
+          <Badge variant={roleVariant}>{role}</Badge>
+          <span className="user-card-joined">Joined {formatted}</span>
         </div>
-
-        <div className="user-card-stats">
-          {stats.map((s) => (
-            <div key={s.label} className="user-card-stat">
-              <span className="user-card-stat-value">{s.value}</span>
-              <span className="user-card-stat-label">{s.label}</span>
-            </div>
-          ))}
-        </div>
-
-        {onEditProfile && (
-          <div className="user-card-actions">
-            <button className="btn btn--outline-gold btn--sm" onClick={onEditProfile}>
-              ✏️ Edit Profile
-            </button>
-          </div>
-        )}
       </div>
+      {onEdit && (
+        <button className="user-card-edit-btn" onClick={onEdit} title="Edit profile">
+          <Pencil size={14} />
+        </button>
+      )}
     </div>
   );
 };

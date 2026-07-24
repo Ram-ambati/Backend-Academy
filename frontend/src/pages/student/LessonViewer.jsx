@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Button from '../../components/common/Button/Button';
 import Card from '../../components/common/Card/Card';
 import ProgressBar from '../../components/course/ProgressBar/ProgressBar';
@@ -53,13 +54,13 @@ const LessonViewer = () => {
       <div style={{ flex: 1, overflowY: 'auto', padding: '1.25rem' }}>
         {/* Prev / Topic / Next Bar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem 1rem', background: 'var(--white)', borderRadius: 'var(--radius-lg)', border: '1.5px solid var(--border)', boxShadow: 'var(--shadow-sm)', marginBottom: '1.25rem' }}>
-          <Button size="sm" variant="outline-gold" icon="←">Prev</Button>
+          <Button size="sm" variant="outline-gold" icon={<ChevronLeft size={16} />}>Prev</Button>
           <div style={{ flex: 1, textAlign: 'center' }}>
             <span style={{ fontWeight: 700, fontSize: '0.9375rem', color: 'var(--text-dark)' }}>
               Lesson {activeLesson} — Your First REST Controller
             </span>
           </div>
-          <Button size="sm" variant="outline-green" iconRight="→">Next</Button>
+          <Button size="sm" variant="outline-green" iconRight={<ChevronRight size={16} />}>Next</Button>
         </div>
 
         {/* Progress */}

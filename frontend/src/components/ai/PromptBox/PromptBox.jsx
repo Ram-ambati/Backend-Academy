@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Send, Loader2 } from 'lucide-react';
 
 const SUGGESTIONS = [
   'Explain this concept',
@@ -10,7 +11,7 @@ const SUGGESTIONS = [
 const PromptBox = ({
   onSend,
   isLoading = false,
-  placeholder = 'Ask the AI tutor anything…',
+  placeholder = 'Ask the AI tutor anything...',
   showSuggestions = true,
 }) => {
   const [value, setValue] = useState('');
@@ -79,7 +80,7 @@ const PromptBox = ({
             aria-label="Send message"
             title="Send (Enter)"
           >
-            {isLoading ? '⏳' : '➤'}
+            {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
           </button>
         </div>
       </div>

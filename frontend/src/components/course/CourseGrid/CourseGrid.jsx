@@ -1,4 +1,5 @@
 import React from 'react';
+import { Inbox } from 'lucide-react';
 import CourseCard from '../CourseCard/CourseCard.jsx';
 
 const CourseGrid = ({
@@ -10,7 +11,7 @@ const CourseGrid = ({
   if (!courses.length) {
     return (
       <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-        <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>📭</div>
+        <div style={{ marginBottom: '0.75rem', display: 'flex', justifyContent: 'center' }}><Inbox size={40} strokeWidth={1.5} /></div>
         <p>{emptyMessage}</p>
       </div>
     );

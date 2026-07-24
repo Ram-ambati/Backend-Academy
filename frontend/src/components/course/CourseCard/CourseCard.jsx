@@ -1,4 +1,5 @@
 import React from 'react';
+import { BookOpen, Clock, Bookmark, Star } from 'lucide-react';
 import Badge from '../../common/Badge/Badge.jsx';
 
 const CourseCard = ({
@@ -7,7 +8,7 @@ const CourseCard = ({
   category = 'Backend',
   level = 'Intermediate',
   thumbnail = null,
-  emoji = '⚙️',
+  icon = null,
   lessons = 24,
   duration = '8h 30m',
   rating = 4.8,
@@ -28,13 +29,15 @@ const CourseCard = ({
         {thumbnail ? (
           <img src={thumbnail} alt={title} loading="lazy" />
         ) : (
-          <div className="course-card-thumb-placeholder">{emoji}</div>
+          <div className="course-card-thumb-placeholder">
+            {icon || <BookOpen size={32} />}
+          </div>
         )}
         <div className="course-card-level">
           <Badge variant={levelVariant}>{level}</Badge>
         </div>
         <button className="course-card-bookmark" onClick={(e) => e.stopPropagation()} aria-label="Bookmark">
-          🔖
+          <Bookmark size={16} />
         </button>
       </div>
 
@@ -45,8 +48,8 @@ const CourseCard = ({
         <div className="course-card-desc">{description}</div>
 
         <div className="course-card-meta">
-          <span className="course-card-meta-item">📖 {lessons} lessons</span>
-          <span className="course-card-meta-item">⏱ {duration}</span>
+          <span className="course-card-meta-item"><BookOpen size={14} /> {lessons} lessons</span>
+          <span className="course-card-meta-item"><Clock size={14} /> {duration}</span>
         </div>
 
         {progress > 0 && (
@@ -72,7 +75,7 @@ const CourseCard = ({
           <span className="course-card-instructor-name">{instructor.name}</span>
         </div>
         <div className="course-card-rating">
-          ⭐ {rating}
+          <Star size={14} fill="currentColor" /> {rating}
         </div>
       </div>
     </div>

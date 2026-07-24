@@ -1,4 +1,5 @@
 import React from 'react';
+import { Play, Video } from 'lucide-react';
 
 /**
  * VideoPlayer — embeds a YouTube video by URL or video ID.
@@ -31,7 +32,7 @@ const VideoPlayer = ({
           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1a1a2e' }}
         >
           <div style={{ textAlign: 'center', color: '#6b7280' }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🎬</div>
+            <div style={{ marginBottom: '0.5rem', display: 'flex', justifyContent: 'center' }}><Play size={40} strokeWidth={1.5} /></div>
             <p style={{ fontSize: '0.875rem' }}>No video source provided</p>
           </div>
         </div>
@@ -54,7 +55,7 @@ const VideoPlayer = ({
       </div>
       {caption && (
         <div className="video-player-caption">
-          <span>📹</span> {caption}
+          <Video size={14} /> {caption}
         </div>
       )}
     </div>

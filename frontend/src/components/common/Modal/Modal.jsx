@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { X } from 'lucide-react';
 
 const Modal = ({
   isOpen,
@@ -45,7 +46,7 @@ const Modal = ({
       <div className={`modal modal--${size}`}>
         <div className="modal-header">
           <div id="modal-title" className="modal-title">{title}</div>
-          <button className="modal-close" onClick={onClose} aria-label="Close">✕</button>
+          <button className="modal-close" onClick={onClose} aria-label="Close"><X size={16} /></button>
         </div>
         <div className="modal-body">{children}</div>
         {footer && <div className="modal-footer">{footer}</div>}
