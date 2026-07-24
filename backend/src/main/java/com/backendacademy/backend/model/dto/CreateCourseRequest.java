@@ -31,4 +31,8 @@ public class CreateCourseRequest {
     @NotNull(message = "Difficulty level is required")
     @Schema(description = "Course difficulty level", example = "BEGINNER")
     private DifficultyLevel difficultyLevel;
+
+    @Size(max = 500, message = "Thumbnail URL must not exceed 500 characters")
+    @Schema(description = "URL to the course thumbnail image", example = "https://images.unsplash.com/photo-1555066931-4365d14bab8c")
+    private String thumbnailUrl;
 }

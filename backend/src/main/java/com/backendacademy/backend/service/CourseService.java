@@ -33,6 +33,7 @@ public class CourseService {
                 .description(request.getDescription())
                 .category(request.getCategory())
                 .difficultyLevel(request.getDifficultyLevel())
+                .thumbnailUrl(request.getThumbnailUrl())
                 .status(CourseStatus.DRAFT)
                 .instructor(currentUser)
                 .build();
@@ -107,6 +108,9 @@ public class CourseService {
         }
         if (request.getDifficultyLevel() != null) {
             course.setDifficultyLevel(request.getDifficultyLevel());
+        }
+        if (request.getThumbnailUrl() != null) {
+            course.setThumbnailUrl(request.getThumbnailUrl());
         }
         // NOTE: status is intentionally NOT updatable via PUT.
         // State transitions must go through dedicated endpoints (/publish, /archive).

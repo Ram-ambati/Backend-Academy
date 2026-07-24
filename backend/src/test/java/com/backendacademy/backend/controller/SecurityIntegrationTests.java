@@ -59,7 +59,7 @@ public class SecurityIntegrationTests {
 
     @Test
     void unauthenticatedRequest_shouldReturn401Json() throws Exception {
-        mockMvc.perform(get("/api/v1/courses"))
+        mockMvc.perform(post("/api/v1/courses"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.errorCode").value("UNAUTHORIZED"));
     }

@@ -114,7 +114,8 @@ public class CourseControllerTests {
                 "Spring Boot Fundamentals",
                 "Learn Spring Boot from scratch",
                 "Spring Boot",
-                DifficultyLevel.BEGINNER
+                DifficultyLevel.BEGINNER,
+                null
         );
 
         mockMvc.perform(post("/api/v1/courses")
@@ -133,7 +134,7 @@ public class CourseControllerTests {
     @Test
     void testStudentCannotCreateCourse() throws Exception {
         CreateCourseRequest request = new CreateCourseRequest(
-                "Hacking Course", "Nope", "Hacking", DifficultyLevel.ADVANCED
+                "Hacking Course", "Nope", "Hacking", DifficultyLevel.ADVANCED, null
         );
 
         mockMvc.perform(post("/api/v1/courses")
@@ -262,7 +263,7 @@ public class CourseControllerTests {
                 .build());
 
         UpdateCourseRequest request = new UpdateCourseRequest(
-                "Updated Title", null, null, DifficultyLevel.ADVANCED
+                "Updated Title", null, null, DifficultyLevel.ADVANCED, null
         );
 
         mockMvc.perform(put("/api/v1/courses/" + course.getId())
@@ -288,7 +289,7 @@ public class CourseControllerTests {
                 .build());
 
         UpdateCourseRequest request = new UpdateCourseRequest(
-                "Hijacked", null, null, null
+                "Hijacked", null, null, null, null
         );
 
         mockMvc.perform(put("/api/v1/courses/" + course.getId())
@@ -311,7 +312,7 @@ public class CourseControllerTests {
                 .build());
 
         UpdateCourseRequest request = new UpdateCourseRequest(
-                "Admin Override", null, null, null
+                "Admin Override", null, null, null, null
         );
 
         mockMvc.perform(put("/api/v1/courses/" + course.getId())
@@ -391,7 +392,7 @@ public class CourseControllerTests {
     @Test
     void testCreateCourseWithBlankTitleFails() throws Exception {
         CreateCourseRequest request = new CreateCourseRequest(
-                "", "Some desc", "Java", DifficultyLevel.BEGINNER
+                "", "Some desc", "Java", DifficultyLevel.BEGINNER, null
         );
 
         mockMvc.perform(post("/api/v1/courses")

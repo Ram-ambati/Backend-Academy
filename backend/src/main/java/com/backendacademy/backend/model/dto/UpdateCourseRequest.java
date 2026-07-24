@@ -27,6 +27,10 @@ public class UpdateCourseRequest {
     @Schema(description = "Updated difficulty level", example = "ADVANCED")
     private DifficultyLevel difficultyLevel;
 
+    @Size(max = 500, message = "Thumbnail URL must not exceed 500 characters")
+    @Schema(description = "Updated URL to the course thumbnail image", example = "https://images.unsplash.com/photo-1555066931-4365d14bab8c")
+    private String thumbnailUrl;
+
     // NOTE: No 'status' field. State transitions (DRAFT -> PUBLISHED -> ARCHIVED)
     // are strictly isolated to dedicated workflow endpoints (e.g., /publish).
 }
