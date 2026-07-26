@@ -23,6 +23,18 @@ const CourseBuilder = () => {
   });
   
   const [errorMsg, setErrorMsg] = useState(null);
+  const [isDirty, setIsDirty] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDirty]);
 
   // Fetch course data if in edit mode
   const { data: existingCourse, isLoading: isFetching } = useQuery({
@@ -48,6 +60,7 @@ const CourseBuilder = () => {
   }, [existingCourse]);
 
   const handleChange = (field, value) => {
+    setIsDirty(true);
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -59,12 +72,14 @@ const CourseBuilder = () => {
       return createCourse(data);
     },
     onSuccess: () => {
+      setIsDirty(false); // Clear dirty flag before navigating
       queryClient.invalidateQueries({ queryKey: ['instructorCourses'] });
       navigate('/instructor');
     },
     onError: (err) => {
       console.error('Failed to save course', err);
-      setErrorMsg(err.response?.data?.message || 'Failed to save course. Please try again.');
+      // err.message is already constructed by course.api.js to include details
+      setErrorMsg(err.message || 'Failed to save course. Please try again.');
     }
   });
 
@@ -107,6 +122,7 @@ const CourseBuilder = () => {
             value={formData.title} 
             onChange={(e) => handleChange('title', e.target.value)} 
             placeholder="e.g. Advanced Spring Security" 
+            maxLength={100}
             required 
           />
           
@@ -117,6 +133,7 @@ const CourseBuilder = () => {
               value={formData.description}
               onChange={(e) => handleChange('description', e.target.value)}
               placeholder="What will students learn in this course?"
+              maxLength={500}
               style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--border)', background: 'var(--white)', fontSize: '0.9375rem', outline: 'none', fontFamily: 'inherit', resize: 'vertical' }}
             />
           </div>

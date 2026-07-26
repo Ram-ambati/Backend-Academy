@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { login, registerStudent, registerInstructor } from '../../api/auth.api';
 import useAuthStore from '../../stores/useAuthStore';
@@ -16,16 +16,31 @@ import Badge from '../../components/common/Badge/Badge';
    EMAIL VALIDATION
    ===================================================== */
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 const validateEmail = (email) => {
-  if (!email) return '';
-  if (!EMAIL_REGEX.test(email)) return 'Invalid email format';
+  if (!email || email.trim() === '') return 'Email is required.';
+  if (email.trim().length > 100) return 'Email cannot exceed 100 characters.';
+  if (!EMAIL_REGEX.test(email.trim())) return 'Invalid email format';
+  return '';
+};
+
+const validateName = (name, isRegister) => {
+  if (!isRegister) return '';
+  if (!name || name.trim() === '') return 'Full Name is required.';
+  if (name.trim().length > 20) return 'Full Name cannot exceed 20 characters.';
   return '';
 };
 
 const validatePassword = (password, isRegister) => {
-  if (!password) return '';
-  if (isRegister && password.length < 6) return 'Password must be at least 6 characters';
+  if (!password) return 'Password is required.';
+  if (isRegister && password.length < 6) return 'Password must be at least 6 characters.';
+  if (isRegister && password.length > 50) return 'Password cannot exceed 50 characters.';
+  return '';
+};
+
+const validateConfirmPassword = (password, confirmPassword, isRegister) => {
+  if (!isRegister) return '';
+  if (!confirmPassword) return 'Please confirm your password.';
+  if (password !== confirmPassword) return 'Passwords do not match.';
   return '';
 };
 
@@ -41,11 +56,25 @@ const AuthPage = () => {
   /* ── Derive mode from route path ── */
   const isRegister = location.pathname.includes('register');
 
+  /* ── Expired Session Handling ── */
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('expired') === 'true') {
+      addToast({
+        type: 'error',
+        title: 'Session Expired',
+        message: 'Your session has expired. Please log in again.'
+      });
+      navigate('/auth/login', { replace: true });
+    }
+  }, [location, navigate, addToast]);
+
   /* ── Form State ── */
   const [form, setForm] = useState({
     name: '',
     email: '',
     password: '',
+    confirmPassword: '',
     role: 'STUDENT', // STUDENT | INSTRUCTOR
     experience: 'Junior',
     credentials: '',
@@ -60,27 +89,44 @@ const AuthPage = () => {
   /* ── Handlers ── */
   const handleChange = useCallback((field) => (e) => {
     const value = e.target.value;
-    setForm((prev) => ({ ...prev, [field]: value }));
-    setApiError(''); // Clear API error when user corrects input
-
-    // Live validation on touched fields
-    if (field === 'email') {
-      setErrors((prev) => ({ ...prev, email: validateEmail(value) }));
-    }
-    if (field === 'password') {
-      setErrors((prev) => ({ ...prev, password: validatePassword(value, isRegister) }));
-    }
+    setForm((prev) => {
+      const nextForm = { ...prev, [field]: value };
+      
+      // Live validation on touched fields
+      if (field === 'name') {
+        setErrors((errs) => ({ ...errs, name: validateName(value, isRegister) }));
+      }
+      if (field === 'email') {
+        setErrors((errs) => ({ ...errs, email: validateEmail(value) }));
+      }
+      if (field === 'password' || field === 'confirmPassword') {
+        setErrors((errs) => ({ 
+          ...errs, 
+          password: validatePassword(nextForm.password, isRegister),
+          confirmPassword: validateConfirmPassword(nextForm.password, nextForm.confirmPassword, isRegister)
+        }));
+      }
+      return nextForm;
+    });
+    setApiError(''); 
   }, [isRegister]);
 
   const handleBlur = useCallback((field) => () => {
     setTouched((prev) => ({ ...prev, [field]: true }));
+    if (field === 'name') {
+      setErrors((prev) => ({ ...prev, name: validateName(form.name, isRegister) }));
+    }
     if (field === 'email') {
       setErrors((prev) => ({ ...prev, email: validateEmail(form.email) }));
     }
-    if (field === 'password') {
-      setErrors((prev) => ({ ...prev, password: validatePassword(form.password, isRegister) }));
+    if (field === 'password' || field === 'confirmPassword') {
+      setErrors((prev) => ({ 
+        ...prev, 
+        password: validatePassword(form.password, isRegister),
+        confirmPassword: validateConfirmPassword(form.password, form.confirmPassword, isRegister)
+      }));
     }
-  }, [form.email, form.password, isRegister]);
+  }, [form, isRegister]);
 
   const setRole = useCallback((role) => {
     setForm((prev) => ({ ...prev, role }));
@@ -88,7 +134,6 @@ const AuthPage = () => {
 
   /* ── Mode Toggle ── */
   const toggleMode = useCallback(() => {
-    setApiError('');
     setErrors({});
     setTouched({});
     if (isRegister) {
@@ -101,14 +146,15 @@ const AuthPage = () => {
   /* ── Submit ── */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setApiError('');
 
     // Client-side validation gate
+    const nameErr = validateName(form.name, isRegister);
     const emailErr = validateEmail(form.email);
     const passErr = validatePassword(form.password, isRegister);
-    if (emailErr || passErr) {
-      setErrors({ email: emailErr, password: passErr });
-      setTouched({ email: true, password: true });
+    const confirmPassErr = validateConfirmPassword(form.password, form.confirmPassword, isRegister);
+    if (nameErr || emailErr || passErr || confirmPassErr) {
+      setErrors({ name: nameErr, email: emailErr, password: passErr, confirmPassword: confirmPassErr });
+      setTouched({ name: true, email: true, password: true, confirmPassword: true });
       return;
     }
 
@@ -116,26 +162,28 @@ const AuthPage = () => {
 
     try {
       let result;
+      const cleanEmail = form.email.trim().toLowerCase();
+      const cleanName = form.name.trim();
 
       if (isRegister) {
         if (form.role === 'INSTRUCTOR') {
           result = await registerInstructor({
-            name: form.name,
-            email: form.email,
+            name: cleanName,
+            email: cleanEmail,
             password: form.password,
             credentials: form.credentials,
             bio: form.bio,
           });
         } else {
           result = await registerStudent({
-            name: form.name,
-            email: form.email,
+            name: cleanName,
+            email: cleanEmail,
             password: form.password,
             experience: form.experience,
           });
         }
       } else {
-        result = await login(form.email, form.password);
+        result = await login(cleanEmail, form.password);
       }
 
       const { token, user } = result;
@@ -162,19 +210,14 @@ const AuthPage = () => {
     } catch (err) {
       // ── Error Routing ──
       const status = err?.response?.status;
+      const errorMessage = err.message || 'Something went wrong. Please try again.';
 
-      if (status >= 500) {
-        // Server error → Global toast (our fault)
-        addToast({
-          type: 'error',
-          title: 'Server Error',
-          message: 'Something went wrong on our end. Please try again later.',
-          duration: 6000,
-        });
-      } else {
-        // Client error (401, 400, 409) → Inline alert (their input)
-        setApiError(err.message || 'Something went wrong. Please try again.');
-      }
+      addToast({
+        type: 'error',
+        title: isRegister ? 'Registration Failed' : 'Authentication Failed',
+        message: errorMessage,
+        duration: 6000,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -189,71 +232,72 @@ const AuthPage = () => {
         <div className="auth-bg-orb auth-bg-orb--green" />
       </div>
 
-      <main className="auth-main">
-        {/* ── Brand ── */}
-        <a className="auth-brand" href="/">
-          <div className="navbar-logo"><GraduationCap size={20} /></div>
-          <span className="navbar-brand-name">
-            Backend<span>Academy</span>
-          </span>
-        </a>
+      <main className="auth-main auth-main--split">
+        {/* ── Left Side Text (Split Layout) ── */}
+        <div className="auth-split-left">
+          <a className="auth-brand" href="/">
+            <div className="navbar-logo"><GraduationCap size={28} /></div>
+            <span className="navbar-brand-name" style={{ fontSize: '1.5rem' }}>
+              Backend<span>Academy</span>
+            </span>
+          </a>
+          <div className="auth-split-text">
+            <h1 className="auth-split-title">
+              {isRegister ? 'Master Backend Engineering' : 'Welcome Back'}
+            </h1>
+            <p className="auth-split-desc">
+              {isRegister 
+                ? 'Join thousands of developers building production-grade systems from first principles. Start learning today.'
+                : 'Log in to continue your journey and pick up right where you left off.'}
+            </p>
+          </div>
 
-        {/* ── Auth Card ── */}
-        <Card className="auth-card">
-          <div className="auth-card-inner">
-            {/* ── Header ── */}
-            <div className="auth-header">
-              <h2 className="auth-title">
-                {isRegister ? 'Create your account' : 'Welcome back'}
-              </h2>
-              <p className="auth-subtitle">
-                {isRegister
-                  ? 'Join Backend Academy and start building production-grade systems.'
-                  : 'Log in to your account to continue learning.'}
-              </p>
+          {/* ── Role Selector (Register only) moved to left side ── */}
+          {isRegister && (
+            <div className="auth-role-selector" style={{ marginTop: '1rem' }}>
+              <span className="auth-role-label">I want to…</span>
+              <div className="auth-role-buttons">
+                <button
+                  type="button"
+                  className={`auth-role-btn${form.role === 'STUDENT' ? ' auth-role-btn--active auth-role-btn--student' : ''}`}
+                  onClick={() => setRole('STUDENT')}
+                >
+                  <span className="auth-role-btn-icon"><BookOpen size={22} /></span>
+                  <span className="auth-role-btn-text">Learn</span>
+                  <span className="auth-role-btn-desc">Student</span>
+                </button>
+                <button
+                  type="button"
+                  className={`auth-role-btn${form.role === 'INSTRUCTOR' ? ' auth-role-btn--active auth-role-btn--instructor' : ''}`}
+                  onClick={() => setRole('INSTRUCTOR')}
+                >
+                  <span className="auth-role-btn-icon"><UserCog size={22} /></span>
+                  <span className="auth-role-btn-text">Teach</span>
+                  <span className="auth-role-btn-desc">Instructor</span>
+                </button>
+              </div>
             </div>
+          )}
+        </div>
 
-            {/* ── API Error Alert ── */}
-            {apiError && (
-              <Alert
-                type="error"
-                title={isRegister ? 'Registration Failed' : 'Authentication Failed'}
-                dismissible={true}
-                onDismiss={() => setApiError('')}
-              >
-                {apiError}
-              </Alert>
-            )}
+        {/* ── Right Side Form ── */}
+        <div className="auth-split-right">
+          <Card className="auth-card">
+            <div className="auth-card-inner">
+              {/* ── Header ── */}
+              <div className="auth-header">
+                <h2 className="auth-title">
+                  {isRegister ? 'Create your account' : 'Log in'}
+                </h2>
+                <p className="auth-subtitle">
+                  {isRegister
+                    ? 'Get started by creating your account below.'
+                    : 'Enter your credentials to access your account.'}
+                </p>
+              </div>
 
-            {/* ── Form ── */}
-            <form className="auth-form" onSubmit={handleSubmit} noValidate>
-
-              {/* ── Role Selector (Register only) ── */}
-              {isRegister && (
-                <div className="auth-role-selector">
-                  <span className="auth-role-label">I want to…</span>
-                  <div className="auth-role-buttons">
-                    <button
-                      type="button"
-                      className={`auth-role-btn${form.role === 'STUDENT' ? ' auth-role-btn--active auth-role-btn--student' : ''}`}
-                      onClick={() => setRole('STUDENT')}
-                    >
-                      <span className="auth-role-btn-icon"><BookOpen size={22} /></span>
-                      <span className="auth-role-btn-text">Learn</span>
-                      <span className="auth-role-btn-desc">Student</span>
-                    </button>
-                    <button
-                      type="button"
-                      className={`auth-role-btn${form.role === 'INSTRUCTOR' ? ' auth-role-btn--active auth-role-btn--instructor' : ''}`}
-                      onClick={() => setRole('INSTRUCTOR')}
-                    >
-                      <span className="auth-role-btn-icon"><UserCog size={22} /></span>
-                      <span className="auth-role-btn-text">Teach</span>
-                      <span className="auth-role-btn-desc">Instructor</span>
-                    </button>
-                  </div>
-                </div>
-              )}
+              {/* ── Form ── */}
+              <form className="auth-form" onSubmit={handleSubmit} noValidate>
 
               {/* ── Name (Register only) ── */}
               {isRegister && (
@@ -264,6 +308,8 @@ const AuthPage = () => {
                   placeholder="Ram Ambati"
                   value={form.name}
                   onChange={handleChange('name')}
+                  onBlur={handleBlur('name')}
+                  error={touched.name ? errors.name : ''}
                   required
                 />
               )}
@@ -294,6 +340,21 @@ const AuthPage = () => {
                 hint={isRegister ? 'At least 6 characters' : ''}
                 required
               />
+
+              {/* ── Confirm Password (Register only) ── */}
+              {isRegister && (
+                <Input
+                  label="Confirm Password"
+                  id="auth-confirm-password"
+                  type="password"
+                  placeholder="Repeat your password"
+                  value={form.confirmPassword}
+                  onChange={handleChange('confirmPassword')}
+                  onBlur={handleBlur('confirmPassword')}
+                  error={touched.confirmPassword ? errors.confirmPassword : ''}
+                  required
+                />
+              )}
 
               {/* ── Student-specific fields ── */}
               {isRegister && form.role === 'STUDENT' && (
@@ -344,6 +405,7 @@ const AuthPage = () => {
                 size="lg"
                 type="submit"
                 isLoading={isLoading}
+                disabled={isLoading}
                 className="auth-submit-btn"
               >
                 {isRegister ? 'Create Account' : 'Sign In'}
@@ -378,6 +440,7 @@ const AuthPage = () => {
             </div>
           </div>
         </Card>
+        </div>
       </main>
     </div>
   );

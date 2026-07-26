@@ -5,7 +5,9 @@ import Loader from './components/common/Loader/Loader';
 import ProtectedRoute from './components/layout/ProtectedRoute/ProtectedRoute';
 
 /* === Global CSS Imports === */
-import './App.css';
+import './components/layout/layout.css';
+import './pages.css';
+import './mediaq.css';
 import './components/common/common.css';
 import './components/course/course.css';
 import './components/ai/ai.css';

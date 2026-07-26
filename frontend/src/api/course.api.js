@@ -117,8 +117,16 @@ export const getMyCourses = async ({ page = 0, size = 10 } = {}) => {
  * POST /api/v1/courses
  */
 export const createCourse = async (courseData) => {
-  const response = await api.post('/api/v1/courses', courseData);
-  return adaptCourse(response.data);
+  try {
+    const response = await api.post('/api/v1/courses', courseData);
+    return adaptCourse(response.data);
+  } catch (error) {
+    let message = error.response?.data?.message || 'Failed to create course';
+    if (error.response?.data?.details?.length) {
+      message = error.response.data.details.join(', ');
+    }
+    throw new Error(message);
+  }
 };
 
 /**
@@ -126,6 +134,14 @@ export const createCourse = async (courseData) => {
  * PUT /api/v1/courses/{id}
  */
 export const updateCourse = async (id, courseData) => {
-  const response = await api.put(`/api/v1/courses/${id}`, courseData);
-  return adaptCourse(response.data);
+  try {
+    const response = await api.put(`/api/v1/courses/${id}`, courseData);
+    return adaptCourse(response.data);
+  } catch (error) {
+    let message = error.response?.data?.message || 'Failed to update course';
+    if (error.response?.data?.details?.length) {
+      message = error.response.data.details.join(', ');
+    }
+    throw new Error(message);
+  }
 };

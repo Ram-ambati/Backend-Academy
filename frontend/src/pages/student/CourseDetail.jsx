@@ -28,7 +28,29 @@ const CourseDetail = () => {
   }, [courseId]);
 
   if (isLoading) return <div style={{ padding: '2rem' }}><Loader rows={3} /></div>;
-  if (!course) return <div style={{ padding: '2rem', textAlign: 'center' }}>Course not found.</div>;
+  if (!course) {
+    return (
+      <div style={{ padding: '2rem', maxWidth: '900px', margin: '0 auto' }}>
+        <Button variant="ghost" onClick={() => navigate('/courses')} style={{ marginBottom: '1rem' }}>
+          <ArrowLeft size={16} style={{ marginRight: '6px' }} /> Back to Courses
+        </Button>
+        <div style={{ textAlign: 'center', padding: '4rem 2rem', background: 'var(--white)', borderRadius: 'var(--radius-xl)', border: '1.5px solid var(--border)', marginTop: '2rem' }}>
+          <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'center', color: 'var(--text-light)' }}>
+            <BookOpen size={48} strokeWidth={1.5} />
+          </div>
+          <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '0.5rem' }}>
+            Course Not Found
+          </h3>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginBottom: '1.5rem' }}>
+            The course you're looking for doesn't exist or has been removed.
+          </p>
+          <Button variant="primary" onClick={() => navigate('/courses')}>
+            Browse All Courses
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ padding: '2rem', maxWidth: '900px', margin: '0 auto' }}>
