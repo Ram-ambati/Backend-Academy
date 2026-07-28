@@ -15,7 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -130,7 +130,7 @@ public class CourseService {
 
         enforceOwnership(course, currentUser);
 
-        course.setDeletedAt(LocalDateTime.now());
+        course.setDeletedAt(Instant.now());
         courseRepository.save(course);
 
         // TODO: Fire a CourseDeletedEvent (Spring Application Events) so that future

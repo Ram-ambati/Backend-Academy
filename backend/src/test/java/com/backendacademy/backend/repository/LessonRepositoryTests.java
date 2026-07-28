@@ -9,7 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -173,7 +173,7 @@ public class LessonRepositoryTests {
                 .content("Deleted content")
                 .positionRank(20000L)
                 .course(course)
-                .deletedAt(LocalDateTime.now()) // soft deleted
+                .deletedAt(Instant.now()) // soft deleted
                 .build();
 
         lessonRepository.saveAll(List.of(activeLesson, deletedLesson));

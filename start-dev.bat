@@ -5,6 +5,16 @@ set "ROOT_DIR=%~dp0"
 if "%JAVA_HOME%"=="C:\Program Files\Java\jdk-21\bin\javac.exe" (
     set "JAVA_HOME=C:\Program Files\Java\jdk-21"
 )
+if "%JAVA_HOME%"=="" (
+    set "JAVA_HOME=C:\Program Files\Java\jdk-21"
+)
+
+set "SPRING_DATASOURCE_URL=jdbc:postgresql://aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres"
+set "SPRING_DATASOURCE_USERNAME=postgres.cqgglrpcbmstihzlxsrr"
+set "SPRING_DATASOURCE_PASSWORD=bUxP&Qi8VvpXZ.6"
+set "ADMIN_EMAIL=admin@example.com"
+set "ADMIN_PASSWORD_HASH=$2a$10$abcdefghijklmnopqrstuvwxyz012345"
+
 set "BACKEND_DIR=%ROOT_DIR%backend"
 set "FRONTEND_DIR=%ROOT_DIR%frontend"
 set "BACKEND_WRAPPER=%BACKEND_DIR%\mvnw.cmd"
@@ -31,12 +41,6 @@ if not exist "%FRONTEND_PACKAGE%" (
     exit /b 1
 )
 
-where java >nul 2>&1
-if errorlevel 1 (
-    echo [ERROR] Java is not available in PATH. Install JDK 21+ and try again.
-    exit /b 1
-)
-
 where npm >nul 2>&1
 if errorlevel 1 (
     echo [ERROR] npm is not available in PATH. Install Node.js and try again.
@@ -60,7 +64,7 @@ if not exist "%FRONTEND_DIR%\node_modules" (
 )
 
 echo Starting backend and frontend in separate terminals...
-start "Backend - Backend Academy" /D "%BACKEND_DIR%" cmd /k "call mvnw.cmd spring-boot:run"
+start "Backend - Backend Academy" /D "%BACKEND_DIR%" cmd /k "set JAVA_HOME=C:\Program Files\Java\jdk-21&& set SPRING_DATASOURCE_URL=jdbc:postgresql://aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres&& set SPRING_DATASOURCE_USERNAME=postgres.cqgglrpcbmstihzlxsrr&& set SPRING_DATASOURCE_PASSWORD=bUxP^&Qi8VvpXZ.6&& set ADMIN_EMAIL=admin@example.com&& set ADMIN_PASSWORD_HASH=$2a$10$abcdefghijklmnopqrstuvwxyz012345&& call mvnw.cmd spring-boot:run"
 start "Frontend - Backend Academy" /D "%FRONTEND_DIR%" cmd /k "npm run dev"
 
 echo Done.
