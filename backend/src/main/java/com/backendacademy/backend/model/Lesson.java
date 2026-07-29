@@ -12,42 +12,34 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.Instant;
 
 @Entity
-@Table(name = "courses")
+@Table(name = "lessons")
 @SQLRestriction("deleted_at IS NULL")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Course {
+public class Lesson {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id", nullable = false)
+    private Course course;
+
     @Column(nullable = false, length = 255)
     private String title;
 
     @Column(columnDefinition = "TEXT")
-    private String description;
+    private String content;
 
-    @Column(nullable = false, length = 100)
-    private String category;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "difficulty_level", nullable = false)
-    private DifficultyLevel difficultyLevel;
+    @Column(name = "video_url", length = 500)
+    private String videoUrl;
 
     @Builder.Default
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private CourseStatus status = CourseStatus.DRAFT;
-
-    @Column(name = "thumbnail_url", length = 500)
-    private String thumbnailUrl;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "instructor_id", nullable = false)
-    private User instructor;
+    @Column(name = "position_rank", nullable = false)
+    private Long positionRank = 10000L;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

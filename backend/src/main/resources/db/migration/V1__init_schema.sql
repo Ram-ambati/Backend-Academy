@@ -8,9 +8,9 @@ CREATE TABLE users (
     faculty VARCHAR(255),
     credentials VARCHAR(255),
     bio TEXT,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMPTZ
 );
 
 -- Partial unique index for soft deletes (PostgreSQL specific)
@@ -20,7 +20,7 @@ CREATE TABLE refresh_tokens (
     id BIGSERIAL PRIMARY KEY,
     token VARCHAR(255) NOT NULL UNIQUE,
     user_id BIGINT NOT NULL,
-    expiry_date TIMESTAMP NOT NULL,
+    expiry_date TIMESTAMPTZ NOT NULL,
     revoked BOOLEAN NOT NULL DEFAULT FALSE,
     CONSTRAINT fk_user_refresh_token
         FOREIGN KEY (user_id) 

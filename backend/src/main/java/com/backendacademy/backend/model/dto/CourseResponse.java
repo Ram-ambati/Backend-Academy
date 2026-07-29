@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Data
 @NoArgsConstructor
@@ -46,10 +46,10 @@ public class CourseResponse {
     private String instructorName;
 
     @Schema(description = "When the course was created")
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     @Schema(description = "When the course was last updated")
-    private LocalDateTime updatedAt;
+    private Instant updatedAt;
 
     /**
      * Maps a Course entity to a CourseResponse DTO.

@@ -9,7 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -175,7 +175,7 @@ public class CourseRepositoryTests {
                 .difficultyLevel(DifficultyLevel.BEGINNER)
                 .status(CourseStatus.PUBLISHED)
                 .instructor(instructor1)
-                .deletedAt(LocalDateTime.now()) // soft deleted
+                .deletedAt(Instant.now()) // soft deleted
                 .build();
 
         courseRepository.saveAll(List.of(course1, course2));
