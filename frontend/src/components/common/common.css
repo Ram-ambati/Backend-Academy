@@ -226,7 +226,7 @@
 .input-prefix { left: 0.75rem; }
 .input-suffix { right: 0.75rem; }
 
-.input-suffix.clickable { pointer-events: auto; cursor: pointer; }
+.input-suffix.clickable { pointer-events: auto; cursor: pointer;border: none; }
 .input-suffix.clickable:hover { color: var(--gold); }
 
 .input-hint {
@@ -252,6 +252,8 @@
   box-shadow: var(--shadow-sm);
   overflow: hidden;
   transition: var(--transition);
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .card--hoverable:hover {

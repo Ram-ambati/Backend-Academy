@@ -28,10 +28,11 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // Only auto-logout and redirect if the 401 didn't come from the login endpoint itself
+    if (error.response?.status === 401 && !error.config?.url?.includes('/api/v1/auth/login')) {
       // Auto-logout on unauthorized
       useAuthStore.getState().logout();
-      window.location.href = '/auth/login';
+      window.location.href = '/auth/login?expired=true';
     }
     return Promise.reject(error);
   }

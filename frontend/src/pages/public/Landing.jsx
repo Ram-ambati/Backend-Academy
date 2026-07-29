@@ -1,14 +1,15 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getFeaturedCourses } from '../../api/course.api';
-import { GraduationCap, Rocket, ArrowRight, ArrowDown, Brain, Server, Bot, AlertTriangle } from 'lucide-react';
+import { GraduationCap, Rocket, ArrowRight, ArrowDown, Brain, Server, Bot, AlertTriangle, Home, BookOpen, LogOut, ShieldAlert } from 'lucide-react';
 import useAuthStore from '../../stores/useAuthStore';
 
 /* ── Components from the design system ── */
 import Badge from '../../components/common/Badge/Badge';
 import Button from '../../components/common/Button/Button';
 import Card from '../../components/common/Card/Card';
+import Modal from '../../components/common/Modal/Modal';
 import Loader from '../../components/common/Loader/Loader';
 import CourseGrid from '../../components/course/CourseGrid/CourseGrid';
 import Footer from '../../components/layout/Footer/Footer';
@@ -49,9 +50,34 @@ const STATS = [
    ===================================================== */
 const Landing = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, logout } = useAuthStore();
   const coursesRef = useRef(null);
+  const profileWrapperRef = useRef(null);
   const [scrolled, setScrolled] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
+  const handleConfirmLogout = () => {
+    setIsLogoutModalOpen(false);
+    setIsProfileOpen(false);
+    logout();
+    navigate('/auth/login', { replace: true });
+  };
+
+  /* ── Close profile dropdown when clicking outside ── */
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileWrapperRef.current && !profileWrapperRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const userInitials = user?.initials || user?.name?.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'ST';
+  const roleVariant = { STUDENT: 'green', INSTRUCTOR: 'gold', ADMIN: 'pink' }[user?.role] || 'gray';
+  const dashboardPath = user?.role === 'INSTRUCTOR' ? '/instructor' : '/dashboard';
 
   /* ── Scroll-aware navbar ── */
   useEffect(() => {
@@ -76,8 +102,9 @@ const Landing = () => {
   };
 
   return (
-    <div className="landing-page">
-      {/* ═══ NAVBAR ═══ */}
+    <>
+      <div className="landing-page">
+        {/* ═══ NAVBAR ═══ */}
       <nav className={`landing-navbar${scrolled ? ' landing-navbar--solid' : ''}`}>
         <a className="navbar-brand" href="/">
           <div className="navbar-logo"><GraduationCap size={20} /></div>
@@ -88,13 +115,52 @@ const Landing = () => {
 
         <div className="landing-navbar-right">
           {isAuthenticated ? (
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => navigate(user?.role === 'INSTRUCTOR' ? '/instructor' : '/dashboard')}
-            >
-              Go to Dashboard
-            </Button>
+            <div className="navbar-avatar-wrapper" ref={profileWrapperRef}>
+              <div
+                className="navbar-avatar"
+                onClick={() => setIsProfileOpen((prev) => !prev)}
+                title={`${user?.name || 'User'} (${user?.role || 'STUDENT'})`}
+                role="button"
+                tabIndex={0}
+              >
+                {userInitials}
+              </div>
+
+              {isProfileOpen && (
+                <div className="profile-dropdown-card" onClick={(e) => e.stopPropagation()}>
+                  <div className="profile-dropdown-header">
+                    <div className="profile-dropdown-avatar">{userInitials}</div>
+                    <div className="profile-dropdown-info">
+                      <div className="profile-dropdown-name">{user?.name || 'Student Account'}</div>
+                      <div className="profile-dropdown-email">{user?.email || 'student@backendacademy.com'}</div>
+                      <div style={{ marginTop: '0.2rem' }}>
+                        <Badge variant={roleVariant} size="sm">{user?.role || 'STUDENT'}</Badge>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="profile-dropdown-menu">
+                    <NavLink to={dashboardPath} className="profile-dropdown-item" onClick={() => setIsProfileOpen(false)}>
+                      <Home size={16} /> Dashboard
+                    </NavLink>
+                    <NavLink to="/courses" className="profile-dropdown-item" onClick={() => setIsProfileOpen(false)}>
+                      <BookOpen size={16} /> Course Catalog
+                    </NavLink>
+                    <button
+                      type="button"
+                      className="profile-dropdown-item profile-dropdown-item--danger"
+                      onClick={() => {
+                        setIsProfileOpen(false);
+                        setIsLogoutModalOpen(true);
+                      }}
+                      style={{ marginTop: '0.25rem', paddingTop: '0.5rem', borderTop: '1px solid var(--border)' }}
+                    >
+                      <LogOut size={16} /> Log Out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
             <>
               <Button
@@ -226,7 +292,7 @@ const Landing = () => {
               courses={courses || []}
               columns={3}
               emptyMessage="New courses dropping soon."
-              onCourseClick={() => navigate('/auth/register')}
+              onCourseClick={(course) => navigate(isAuthenticated ? `/courses/${course.id}` : '/auth/register')}
             />
           )}
 
@@ -234,7 +300,7 @@ const Landing = () => {
             <Button
               variant="outline-gold"
               size="lg"
-              onClick={() => navigate('/auth/register')}
+              onClick={() => navigate(isAuthenticated ? '/courses' : '/auth/register')}
             >
               Explore All Courses <ArrowRight size={16} />
             </Button>
@@ -254,26 +320,61 @@ const Landing = () => {
               <Button
                 variant="primary"
                 size="xl"
-                onClick={() => navigate('/auth/register')}
+                onClick={() => navigate(isAuthenticated ? (user?.role === 'INSTRUCTOR' ? '/instructor' : '/dashboard') : '/auth/register')}
               >
-                Create Free Account
+                {isAuthenticated ? 'Go to Dashboard' : 'Create Free Account'}
               </Button>
-              <span className="landing-cta-signin">
-                Already have an account?{' '}
-                <button
-                  className="landing-cta-link"
-                  onClick={() => navigate('/auth/login')}
-                >
-                  Sign In
-                </button>
-              </span>
+              {!isAuthenticated && (
+                <span className="landing-cta-signin">
+                  Already have an account?{' '}
+                  <button
+                    className="landing-cta-link"
+                    onClick={() => navigate('/auth/login')}
+                  >
+                    Sign In
+                  </button>
+                </span>
+              )}
             </div>
           </div>
         </section>
       </main>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+
+      {/* Logout Confirmation Modal */}
+      <Modal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        title="Confirm Logout"
+        size="sm"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setIsLogoutModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={handleConfirmLogout}>
+              <LogOut size={16} /> Log Out
+            </Button>
+          </>
+        }
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 0' }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-full)', background: 'var(--pink-light)', color: 'var(--pink)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <ShieldAlert size={24} />
+          </div>
+          <div>
+            <p style={{ margin: 0, fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text-dark)' }}>
+              Are you sure you want to log out?
+            </p>
+            <p style={{ margin: '0.25rem 0 0', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+              You will need to sign in again to access your courses and progress.
+            </p>
+          </div>
+        </div>
+      </Modal>
+    </>
   );
 };
 

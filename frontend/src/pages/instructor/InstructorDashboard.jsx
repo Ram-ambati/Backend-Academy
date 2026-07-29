@@ -48,9 +48,17 @@ const InstructorDashboard = () => {
           Failed to load courses. Please try again.
         </Card>
       ) : courses.length === 0 ? (
-        <Card style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-          No courses created yet. Click the button above to get started!
-        </Card>
+        <div style={{ textAlign: 'center', padding: '4rem 2rem', background: 'var(--white)', borderRadius: 'var(--radius-xl)', border: '1.5px solid var(--border)' }}>
+          <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'center', color: 'var(--text-light)' }}>
+            <BookOpen size={48} strokeWidth={1.5} />
+          </div>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '0.5rem' }}>
+            No courses created yet
+          </h3>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
+            Start sharing your expertise with students. Click the button above to create your first course!
+          </p>
+        </div>
       ) : (
         <CourseGrid 
           courses={courses} 

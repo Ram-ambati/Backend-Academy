@@ -9,14 +9,14 @@ if "%JAVA_HOME%"=="" (
     set "JAVA_HOME=C:\Program Files\Java\jdk-21"
 )
 
-set "SPRING_DATASOURCE_URL=jdbc:postgresql://aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres"
-set "SPRING_DATASOURCE_USERNAME=postgres.cqgglrpcbmstihzlxsrr"
-set "SPRING_DATASOURCE_PASSWORD=bUxP&Qi8VvpXZ.6"
-set "ADMIN_EMAIL=admin@example.com"
-set "ADMIN_PASSWORD_HASH=$2a$10$abcdefghijklmnopqrstuvwxyz012345"
-
 set "BACKEND_DIR=%ROOT_DIR%backend"
 set "FRONTEND_DIR=%ROOT_DIR%frontend"
+
+if exist "%BACKEND_DIR%\.env" (
+    for /f "usebackq eol=# tokens=1,* delims==" %%A in ("%BACKEND_DIR%\.env") do (
+        set "%%A=%%B"
+    )
+)
 set "BACKEND_WRAPPER=%BACKEND_DIR%\mvnw.cmd"
 set "FRONTEND_PACKAGE=%FRONTEND_DIR%\package.json"
 set "FRONTEND_LOCKFILE=%FRONTEND_DIR%\package-lock.json"
@@ -64,7 +64,7 @@ if not exist "%FRONTEND_DIR%\node_modules" (
 )
 
 echo Starting backend and frontend in separate terminals...
-start "Backend - Backend Academy" /D "%BACKEND_DIR%" cmd /k "set JAVA_HOME=C:\Program Files\Java\jdk-21&& set SPRING_DATASOURCE_URL=jdbc:postgresql://aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres&& set SPRING_DATASOURCE_USERNAME=postgres.cqgglrpcbmstihzlxsrr&& set SPRING_DATASOURCE_PASSWORD=bUxP^&Qi8VvpXZ.6&& set ADMIN_EMAIL=admin@example.com&& set ADMIN_PASSWORD_HASH=$2a$10$abcdefghijklmnopqrstuvwxyz012345&& call mvnw.cmd spring-boot:run"
+start "Backend - Backend Academy" /D "%BACKEND_DIR%" cmd /k "set JAVA_HOME=C:\Program Files\Java\jdk-21&& call mvnw.cmd spring-boot:run"
 start "Frontend - Backend Academy" /D "%FRONTEND_DIR%" cmd /k "npm run dev"
 
 echo Done.

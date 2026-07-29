@@ -37,7 +37,10 @@ export const registerStudent = async (data) => {
       user: response.data.user
     };
   } catch (error) {
-    const message = error.response?.data?.message || 'Registration failed';
+    let message = error.response?.data?.message || 'Registration failed';
+    if (error.response?.data?.details?.length) {
+      message = error.response.data.details.join(', ');
+    }
     throw new Error(message);
   }
 };
@@ -51,7 +54,10 @@ export const registerInstructor = async (data) => {
       user: response.data.user
     };
   } catch (error) {
-    const message = error.response?.data?.message || 'Registration failed';
+    let message = error.response?.data?.message || 'Registration failed';
+    if (error.response?.data?.details?.length) {
+      message = error.response.data.details.join(', ');
+    }
     throw new Error(message);
   }
 };
