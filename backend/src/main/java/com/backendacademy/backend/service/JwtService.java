@@ -21,7 +21,9 @@ public class JwtService {
     private String secretKey;
 
     private SecretKey getSigningKey() {
-        byte[] keyBytes = HexFormat.of().parseHex(secretKey);
+        // Strip any accidental whitespace (spaces, newlines, etc.) from the environment variable
+        String sanitizedKey = secretKey.replaceAll("\\s+", "");
+        byte[] keyBytes = HexFormat.of().parseHex(sanitizedKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
