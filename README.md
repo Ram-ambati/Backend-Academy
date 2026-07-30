@@ -244,7 +244,7 @@ Track learning outcomes in real time.
 - [x] 2. User Role & Permission Matrix (RBAC — `Role` enum, `@PreAuthorize`)
 - [x] 3. User Entity & Database Design (`User.java`, Flyway `V1`, `V2`)
 - [x] 4. Course Entity & Database Design (`Course.java`, Flyway `V3`)
-- [ ] 5. Lesson Entity & Database Design
+- [x] 5. Lesson Entity & Database Design
 - [ ] 6. Enrollment Entity & Progress Design
 - [x] 7. API Response Standard (`PagedResponse<T>`, Raw DTO responses)
 - [x] 8. Error Response Standard (`ErrorResponse`, `GlobalExceptionHandler`)
