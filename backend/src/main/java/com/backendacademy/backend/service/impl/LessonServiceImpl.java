@@ -130,6 +130,9 @@ public class LessonServiceImpl implements LessonService {
 
     private void enforceReadAuthorization(Course course, User currentUser) {
         if (course.getStatus() != CourseStatus.PUBLISHED) {
+            if (currentUser == null) {
+                throw new ResourceNotFoundException("Course not found");
+            }
             boolean isOwner = course.getInstructor().getId().equals(currentUser.getId());
             boolean isAdmin = currentUser.getRole() == Role.ADMIN;
             if (!isOwner && !isAdmin) {
