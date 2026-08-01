@@ -16,10 +16,12 @@ import java.time.Instant;
                 )
         }
 )
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = {"enrollment", "lesson"})
 public class CompletedLesson {
 
     @Id

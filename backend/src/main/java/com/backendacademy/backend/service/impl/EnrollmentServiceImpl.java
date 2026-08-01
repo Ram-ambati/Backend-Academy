@@ -5,6 +5,7 @@ import com.backendacademy.backend.repository.*;
 import com.backendacademy.backend.service.EnrollmentService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,17 +31,21 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new EntityNotFoundException("Course not found"));
 
-        if (enrollmentRepository.existsByStudentAndCourse(student, course)) {
-            throw new IllegalStateException("Student is already enrolled in this course.");
-        }
+        return enrollmentRepository.findByStudentAndCourse(student, course)
+                .orElseGet(() -> {
+                    Enrollment enrollment = Enrollment.builder()
+                            .student(student)
+                            .course(course)
+                            .progressPercentage(0.0)
+                            .build();
 
-        Enrollment enrollment = Enrollment.builder()
-                .student(student)
-                .course(course)
-                .progressPercentage(0.0)
-                .build();
-
-        return enrollmentRepository.save(enrollment);
+                                        try {
+                                                return enrollmentRepository.saveAndFlush(enrollment);
+                                        } catch (DataIntegrityViolationException ex) {
+                        return enrollmentRepository.findByStudentAndCourse(student, course)
+                                .orElseThrow(() -> ex);
+                    }
+                });
     }
 
     @Override
@@ -52,16 +57,16 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new EntityNotFoundException("Lesson not found"));
 
-        if (completedLessonRepository.existsByEnrollmentIdAndLessonId(enrollmentId, lessonId)) {
-            return;
-        }
-
         CompletedLesson completedLesson = CompletedLesson.builder()
                 .enrollment(enrollment)
                 .lesson(lesson)
                 .build();
 
-        completedLessonRepository.save(completedLesson);
+                try {
+                        completedLessonRepository.saveAndFlush(completedLesson);
+                } catch (DataIntegrityViolationException ex) {
+                        return;
+                }
 
         double progress = calculateProgress(enrollmentId);
 
