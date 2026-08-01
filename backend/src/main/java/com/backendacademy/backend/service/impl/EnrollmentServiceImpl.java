@@ -59,6 +59,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new EntityNotFoundException("Lesson not found"));
 
+        if (!lesson.getCourse().getId().equals(enrollment.getCourse().getId())) {
+            throw new EntityNotFoundException("Lesson not found");
+        }
+
         CompletedLesson completedLesson = CompletedLesson.builder()
                 .enrollment(enrollment)
                 .lesson(lesson)
