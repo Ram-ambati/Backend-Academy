@@ -14,11 +14,13 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import com.backendacademy.backend.service.EnrollmentService;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -42,8 +44,8 @@ public class LessonControllerTests {
     @Autowired
     private LessonRepository lessonRepository;
 
-    @Autowired
-    private EnrollmentRepository enrollmentRepository;
+    @MockitoBean
+    private EnrollmentService enrollmentService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -70,7 +72,7 @@ public class LessonControllerTests {
                 .apply(springSecurity())
                 .build();
 
-        enrollmentRepository.deleteAll();
+        lessonRepository.deleteAll();
         lessonRepository.deleteAll();
         courseRepository.deleteAll();
         userRepository.deleteAll();
@@ -176,17 +178,10 @@ public class LessonControllerTests {
 
     @Test
     void deleteLesson_TriggersProgressRecalculation() throws Exception {
-        Enrollment enrollment = enrollmentRepository.save(Enrollment.builder()
-                .student(student)
-                .course(publishedCourse)
-                .progressPercentage(50.0)
-                .build());
-
         mockMvc.perform(delete("/api/v1/lessons/" + lesson.getId())
                         .header("Authorization", "Bearer " + instructorToken))
                 .andExpect(status().isNoContent());
 
-        Enrollment updated = enrollmentRepository.findById(enrollment.getId()).get();
-        assertEquals(0.0, updated.getProgressPercentage());
+        verify(enrollmentService).recalculateProgressForCourse(publishedCourse.getId());
     }
 }
