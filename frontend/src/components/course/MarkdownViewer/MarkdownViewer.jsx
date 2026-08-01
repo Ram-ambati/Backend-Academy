@@ -1,52 +1,104 @@
 import React from 'react';
-
-/**
- * Lightweight MarkdownViewer — converts basic markdown to HTML.
- * For production, replace the parser with 'marked' or 'react-markdown'.
- */
-const parseMarkdown = (md) => {
-  if (!md) return '';
-  return md
-    // headings
-    .replace(/^#{6}\s+(.+)$/gm, '<h6>$1</h6>')
-    .replace(/^#{5}\s+(.+)$/gm, '<h5>$1</h5>')
-    .replace(/^#{4}\s+(.+)$/gm, '<h4>$1</h4>')
-    .replace(/^#{3}\s+(.+)$/gm, '<h3>$1</h3>')
-    .replace(/^#{2}\s+(.+)$/gm, '<h2>$1</h2>')
-    .replace(/^#\s+(.+)$/gm,    '<h1>$1</h1>')
-    // horizontal rule
-    .replace(/^[-*_]{3,}$/gm, '<hr />')
-    // blockquote
-    .replace(/^>\s+(.+)$/gm, '<blockquote>$1</blockquote>')
-    // bold + italic
-    .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    // inline code
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    // links
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
-    // images
-    .replace(/!\[(.+?)\]\((.+?)\)/g, '<img src="$2" alt="$1" />')
-    // unordered list
-    .replace(/^\s*[-*+]\s+(.+)$/gm, '<li>$1</li>')
-    .replace(/(<li>.*<\/li>(\n|$))+/g, '<ul>$&</ul>')
-    // ordered list
-    .replace(/^\s*\d+\.\s+(.+)$/gm, '<li>$1</li>')
-    // paragraphs (blank line separated)
-    .replace(/\n{2,}/g, '</p><p>')
-    .replace(/^(?!<[a-z])/, '<p>')
-    .replace(/$(?!<\/[a-z])/, '</p>');
-};
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { AlertCircle, Lightbulb, Info, AlertTriangle, ShieldAlert } from 'lucide-react';
+import './MarkdownViewer.css';
 
 const MarkdownViewer = ({ content = '', className = '' }) => {
-  const html = parseMarkdown(content);
-
   return (
-    <div
-      className={`markdown-viewer ${className}`}
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
+    <div className={`markdown-viewer ${className}`}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          code({ node, inline, className, children, ...props }) {
+            const match = /language-(\w+)/.exec(className || '');
+            return !inline && match ? (
+              <SyntaxHighlighter
+                style={vs}
+                language={match[1]}
+                PreTag="div"
+                className="markdown-code-block"
+                {...props}
+              >
+                {String(children).replace(/\n$/, '')}
+              </SyntaxHighlighter>
+            ) : (
+              <code className={`markdown-inline-code ${className || ''}`} {...props}>
+                {children}
+              </code>
+            );
+          },
+          blockquote({ node, children, ...props }) {
+            // Check for GitHub style alerts: [!NOTE], [!TIP], [!IMPORTANT], [!WARNING], [!CAUTION]
+            let isAlert = false;
+            let alertType = '';
+            let alertContent = children;
+
+            if (
+              node.children && 
+              node.children.length > 0 && 
+              node.children[0].type === 'paragraph' && 
+              node.children[0].children && 
+              node.children[0].children.length > 0
+            ) {
+              const firstChild = node.children[0].children[0];
+              if (firstChild.type === 'text' && firstChild.value) {
+                const match = firstChild.value.match(/^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/i);
+                if (match) {
+                  isAlert = true;
+                  alertType = match[1].toLowerCase();
+                  
+                  // Clone the children but remove the alert tag from the first text node
+                  const cleanChildren = React.Children.map(children, (child, index) => {
+                    if (index === 0 && React.isValidElement(child)) {
+                      // We need to carefully strip the [!ALERT] tag from the first paragraph
+                      return React.cloneElement(child, {}, React.Children.map(child.props.children, (textChild, tIndex) => {
+                         if (tIndex === 0 && typeof textChild === 'string') {
+                           return textChild.replace(/^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/i, '').trim();
+                         }
+                         return textChild;
+                      }));
+                    }
+                    return child;
+                  });
+                  alertContent = cleanChildren;
+                }
+              }
+            }
+
+            if (isAlert) {
+              const alertStyles = {
+                note: { icon: <Info size={20} />, color: 'var(--blue)' },
+                tip: { icon: <Lightbulb size={20} />, color: 'var(--green)' },
+                important: { icon: <AlertCircle size={20} />, color: 'var(--gold)' },
+                warning: { icon: <AlertTriangle size={20} />, color: 'var(--orange)' },
+                caution: { icon: <ShieldAlert size={20} />, color: 'var(--red)' }
+              };
+              
+              const style = alertStyles[alertType] || alertStyles.note;
+              
+              return (
+                <div className={`markdown-alert markdown-alert-${alertType}`}>
+                  <div className="markdown-alert-header" style={{ color: style.color }}>
+                    {style.icon}
+                    <span>{alertType.charAt(0).toUpperCase() + alertType.slice(1)}</span>
+                  </div>
+                  <div className="markdown-alert-content">
+                    {alertContent}
+                  </div>
+                </div>
+              );
+            }
+            
+            return <blockquote {...props}>{children}</blockquote>;
+          }
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
   );
 };
 

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar/Navbar';
 import Sidebar from '../components/layout/Sidebar/Sidebar';
 import Footer from '../components/layout/Footer/Footer';
 
 const AppLayout = () => {
   const [sidebarItem, setSidebarItem] = useState('');
+  const location = useLocation();
+  const isLearningPage = location.pathname.startsWith('/learn');
 
   return (
     <div className="app-shell">
@@ -16,7 +18,7 @@ const AppLayout = () => {
           <Outlet />
         </main>
       </div>
-      <Footer />
+      {!isLearningPage && <Footer />}
     </div>
   );
 };

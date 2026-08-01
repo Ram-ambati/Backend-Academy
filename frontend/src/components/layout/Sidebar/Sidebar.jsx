@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
   Home,
   BookOpen,
@@ -15,19 +15,26 @@ import {
   ChevronRight,
   LogOut,
   ShieldAlert,
+  PlayCircle
 } from 'lucide-react';
 import useAuthStore from '../../../stores/useAuthStore';
 import Modal from '../../common/Modal/Modal';
 import Button from '../../common/Button/Button';
 import Badge from '../../common/Badge/Badge';
+import { getCourseLessons } from '../../../api/lesson.api';
 
-const Sidebar = ({ activeItem = 'Introduction', onItemClick }) => {
+const Sidebar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuthStore();
 
   const [collapsed, setCollapsed] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
+  // Dynamic Course State
+  const [currentCourseId, setCurrentCourseId] = useState(null);
+  const [currentLessons, setCurrentLessons] = useState([]);
 
   const sidebarFooterRef = useRef(null);
 
@@ -41,6 +48,30 @@ const Sidebar = ({ activeItem = 'Introduction', onItemClick }) => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Parse URL to find if we're in a course context
+  useEffect(() => {
+    const match = location.pathname.match(/\/(courses|learn)\/(\d+)/);
+    if (match && match[2]) {
+      const parsedId = parseInt(match[2], 10);
+      if (parsedId !== currentCourseId) {
+        setCurrentCourseId(parsedId);
+      }
+    } else {
+      setCurrentCourseId(null);
+    }
+  }, [location.pathname, currentCourseId]);
+
+  // Fetch lessons when course context changes
+  useEffect(() => {
+    if (currentCourseId) {
+      getCourseLessons(currentCourseId)
+        .then(setLessons => setCurrentLessons(setLessons))
+        .catch(console.error);
+    } else {
+      setCurrentLessons([]);
+    }
+  }, [currentCourseId]);
 
   const handleConfirmLogout = () => {
     setIsLogoutModalOpen(false);
@@ -57,23 +88,13 @@ const Sidebar = ({ activeItem = 'Introduction', onItemClick }) => {
     ADMIN: 'pink',
   }[userRole] || 'gray';
 
-  /* ── 1. Getting Started section (Wired) ── */
+  /* ── 1. Getting Started section ── */
   const gettingStartedItems = [
     { icon: Home, label: 'Dashboard', path: userRole === 'INSTRUCTOR' ? '/instructor' : '/dashboard' },
     { icon: BookOpen, label: 'All Courses', path: '/courses' },
   ];
 
-  /* ── 2. Current Course section (In Development - Don't touch) ── */
-  const currentCourseItems = [
-    { icon: Book, label: 'Introduction', badge: null },
-    { icon: Settings, label: 'Spring Boot Basics', badge: null },
-    { icon: Database, label: 'Database Design', badge: '3' },
-    { icon: Shield, label: 'Security & Auth', badge: null },
-    { icon: Globe, label: 'REST API Design', badge: null },
-    { icon: FlaskConical, label: 'Testing', badge: null },
-  ];
-
-  /* ── 3. Explore section (Wired - Achievements removed) ── */
+  /* ── 3. Explore section ── */
   const exploreItems = [
     { icon: Bot, label: 'AI Tutor', path: '/ai-tutor' },
     { icon: TrendingUp, label: 'Progress', path: '/progress' },
@@ -111,24 +132,26 @@ const Sidebar = ({ activeItem = 'Introduction', onItemClick }) => {
           <div className="sidebar-divider" />
         </div>
 
-        {/* Section 2: Current Course (In Dev) */}
-        <div className="sidebar-section">
-          <div className="sidebar-section-label">Current Course</div>
-          {currentCourseItems.map((item) => (
-            <a
-              key={item.label}
-              className={`sidebar-nav-item${activeItem === item.label ? ' active' : ''}`}
-              onClick={() => onItemClick?.(item.label)}
-              href="#"
-              title={collapsed ? item.label : undefined}
-            >
-              <span className="sidebar-nav-icon"><item.icon size={16} /></span>
-              <span className="sidebar-nav-label">{item.label}</span>
-              {item.badge && <span className="sidebar-nav-badge">{item.badge}</span>}
-            </a>
-          ))}
-          <div className="sidebar-divider" />
-        </div>
+        {/* Section 2: Current Course (Dynamic) */}
+        {currentCourseId && currentLessons.length > 0 && (
+          <div className="sidebar-section">
+            <div className="sidebar-section-label">Course Lessons</div>
+            {currentLessons.map((lesson) => (
+              <NavLink
+                key={lesson.id}
+                to={`/learn/${currentCourseId}/${lesson.id}`}
+                className={({ isActive }) => `sidebar-nav-item${isActive ? ' active' : ''}`}
+                title={collapsed ? lesson.title : undefined}
+              >
+                <span className="sidebar-nav-icon"><PlayCircle size={16} /></span>
+                <span className="sidebar-nav-label" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {lesson.title}
+                </span>
+              </NavLink>
+            ))}
+            <div className="sidebar-divider" />
+          </div>
+        )}
 
         {/* Section 3: Explore */}
         <div className="sidebar-section">
