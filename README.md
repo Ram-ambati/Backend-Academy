@@ -30,7 +30,7 @@ With Retrieval-Augmented Generation (RAG), responses are grounded in the platfor
 - [ ] Administrator management
 - [ ] User profiles
 - [ ] Account management
-- [ ] Progress tracking
+- [x] Progress tracking
 
 ### 2) Authentication & Authorization
 Protect all resources in the application.
@@ -56,12 +56,12 @@ Structured progression model: `Course -> Week -> Lesson -> Assignment -> Quiz`
 - [ ] Assignments
 
 ### 5) Lesson Viewer (Core Experience)
-- [ ] Title
-- [ ] Optional embedded YouTube video (URL-based, lightweight storage)
-- [ ] Markdown notes
-- [ ] Java code examples
+- [x] Title
+- [x] Optional embedded YouTube video (URL-based, lightweight storage)
+- [x] Markdown notes
+- [x] Java code examples
 - [ ] Resources
-- [ ] Navigation
+- [x] Navigation
 - [ ] Assignment
 - [ ] AI assistant
 
