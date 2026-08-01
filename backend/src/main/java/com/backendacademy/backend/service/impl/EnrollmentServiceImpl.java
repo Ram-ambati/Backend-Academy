@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -98,5 +99,20 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         }
 
         return (completedLessons * 100.0) / totalLessons;
+    }
+
+    @Override
+    public void recalculateProgressForCourse(Long courseId) {
+        List<Enrollment> enrollments = enrollmentRepository.findByCourseId(courseId);
+        for (Enrollment enrollment : enrollments) {
+            double progress = calculateProgress(enrollment.getId());
+            enrollment.setProgressPercentage(progress);
+            if (progress >= 100.0 && enrollment.getCompletedAt() == null) {
+                enrollment.setCompletedAt(Instant.now());
+            } else if (progress < 100.0) {
+                enrollment.setCompletedAt(null);
+            }
+            enrollmentRepository.save(enrollment);
+        }
     }
 }

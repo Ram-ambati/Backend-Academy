@@ -9,4 +9,6 @@ public interface EnrollmentService {
     void completeLesson(Long enrollmentId, Long lessonId);
 
     double calculateProgress(Long enrollmentId);
+
+    void recalculateProgressForCourse(Long courseId);
 }
