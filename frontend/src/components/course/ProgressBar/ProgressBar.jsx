@@ -9,13 +9,14 @@ const ProgressBar = ({
   animated = true,
 }) => {
   const clamped = Math.min(100, Math.max(0, value));
+  const displayValue = Math.round(clamped);
 
   return (
     <div className="progress-bar">
       {(label || showValue) && (
         <div className="progress-bar-header">
           {label && <span className="progress-bar-label">{label}</span>}
-          {showValue && <span className="progress-bar-value">{clamped}%</span>}
+          {showValue && <span className="progress-bar-value">{displayValue}%</span>}
         </div>
       )}
       <div className={`progress-bar-track progress-bar-track--${size}`}>

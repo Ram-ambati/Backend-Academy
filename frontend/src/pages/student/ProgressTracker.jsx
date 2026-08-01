@@ -1,16 +1,19 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getStudentEnrollments } from '../../api/course.api';
+import { getMyEnrollments } from '../../api/enrollment.api';
 import Card from '../../components/common/Card/Card';
 import ProgressBar from '../../components/course/ProgressBar/ProgressBar';
 import StatisticsCard from '../../components/profile/StatisticsCard/StatisticsCard';
 import Loader from '../../components/common/Loader/Loader';
 import { TrendingUp, Award, BookOpen, Clock, Flame, CheckCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ProgressTracker = () => {
+  const navigate = useNavigate();
+  
   const { data: enrollments = [], isLoading } = useQuery({
     queryKey: ['studentEnrollments'],
-    queryFn: getStudentEnrollments,
+    queryFn: getMyEnrollments,
     staleTime: 1000 * 60 * 5,
   });
 
@@ -22,10 +25,10 @@ const ProgressTracker = () => {
     );
   }
 
-  const completedCount = enrollments.filter((c) => c.progress === 100).length;
-  const inProgressCount = enrollments.filter((c) => c.progress > 0 && c.progress < 100).length;
+  const completedCount = enrollments.filter((c) => c.progressPercentage === 100).length;
+  const inProgressCount = enrollments.filter((c) => c.progressPercentage > 0 && c.progressPercentage < 100).length;
   const overallAvgProgress = enrollments.length > 0
-    ? Math.round(enrollments.reduce((acc, curr) => acc + curr.progress, 0) / enrollments.length)
+    ? Math.round(enrollments.reduce((acc, curr) => acc + curr.progressPercentage, 0) / enrollments.length)
     : 0;
 
   return (
@@ -83,25 +86,38 @@ const ProgressTracker = () => {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {enrollments.map((course) => (
-              <Card key={course.id} style={{ padding: '1.25rem' }}>
+              <Card 
+                key={course.courseId} 
+                style={{ padding: '1.25rem', cursor: 'pointer' }}
+                onClick={() => navigate(`/courses/${course.courseId}`)}
+              >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  <div>
-                    <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--text-dark)', margin: 0 }}>
-                      {course.title}
-                    </h3>
-                    <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                      {course.category} • {course.lessons} lessons total
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    {course.courseThumbnailUrl ? (
+                      <img src={course.courseThumbnailUrl} alt={course.courseTitle} style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '6px' }} />
+                    ) : (
+                      <div style={{ width: '48px', height: '48px', borderRadius: '6px', background: 'var(--bg-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <BookOpen size={24} color="var(--text-muted)" />
+                      </div>
+                    )}
+                    <div>
+                      <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--text-dark)', margin: 0 }}>
+                        {course.courseTitle}
+                      </h3>
+                      <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                        Enrolled: {new Date(course.enrolledAt).toLocaleDateString()}
+                      </div>
                     </div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <span style={{ fontSize: '1.125rem', fontWeight: 800, color: course.progress === 100 ? 'var(--green)' : 'var(--gold-hover)' }}>
-                      {course.progress}%
+                    <span style={{ fontSize: '1.125rem', fontWeight: 800, color: course.progressPercentage === 100 ? 'var(--green)' : 'var(--gold-hover)' }}>
+                      {Math.round(course.progressPercentage)}%
                     </span>
                   </div>
                 </div>
                 <ProgressBar
-                  value={course.progress}
-                  color={course.progress === 100 ? 'green' : 'gold'}
+                  value={course.progressPercentage}
+                  color={course.progressPercentage === 100 ? 'green' : 'gold'}
                   size="md"
                   showValue={false}
                 />
