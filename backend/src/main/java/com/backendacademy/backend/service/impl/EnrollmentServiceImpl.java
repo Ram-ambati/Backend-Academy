@@ -11,7 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
-
+import java.util.stream.Collectors;
+import com.backendacademy.backend.model.dto.EnrollmentResponse;
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -114,5 +115,27 @@ public class EnrollmentServiceImpl implements EnrollmentService {
             }
             enrollmentRepository.save(enrollment);
         }
+    }
+
+    @Override
+    public void completeLessonByStudent(Long studentId, Long lessonId) {
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new EntityNotFoundException("Lesson not found"));
+
+        User student = userRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found"));
+
+        Enrollment enrollment = enrollmentRepository.findByStudentAndCourse(student, lesson.getCourse())
+                .orElseThrow(() -> new EntityNotFoundException("Enrollment not found"));
+
+        completeLesson(enrollment.getId(), lessonId);
+    }
+
+    @Override
+    public List<EnrollmentResponse> getDashBoardEnrollments(User student) {
+        return enrollmentRepository.findDashBoardEnrollments(student)
+                .stream()
+                .map(EnrollmentResponse::fromEntity)
+                .collect(Collectors.toList());
     }
 }
