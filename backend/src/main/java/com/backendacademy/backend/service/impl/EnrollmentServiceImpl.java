@@ -92,7 +92,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                 .orElseThrow(() -> new EntityNotFoundException("Enrollment not found"));
 
         long completedLessons =
-                completedLessonRepository.countByEnrollmentId(enrollmentId);
+                completedLessonRepository.countActiveCompletedLessonsByEnrollmentId(enrollmentId);
 
         long totalLessons =
                 lessonRepository.countByCourseIdAndDeletedAtIsNull(
