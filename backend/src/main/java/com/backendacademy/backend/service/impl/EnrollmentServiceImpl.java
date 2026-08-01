@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.scheduling.annotation.Async;
 import com.backendacademy.backend.model.dto.EnrollmentResponse;
 @Service
 @RequiredArgsConstructor
@@ -106,6 +107,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         return (completedLessons * 100.0) / totalLessons;
     }
 
+    @Async
     @Override
     public void recalculateProgressForCourse(Long courseId) {
         List<Enrollment> enrollments = enrollmentRepository.findByCourseId(courseId);
