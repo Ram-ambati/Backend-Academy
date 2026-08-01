@@ -75,7 +75,7 @@ class EnrollmentServiceImplTest {
         when(enrollmentRepository.findById(1L))
                 .thenReturn(Optional.of(enrollment));
 
-        when(completedLessonRepository.countByEnrollmentId(1L))
+        when(completedLessonRepository.countActiveCompletedLessonsByEnrollmentId(1L))
                 .thenReturn(0L);
 
         when(lessonRepository.countByCourseIdAndDeletedAtIsNull(1L))
@@ -148,7 +148,7 @@ class EnrollmentServiceImplTest {
         when(enrollmentRepository.findById(1L))
                 .thenReturn(Optional.of(enrollment));
 
-        when(completedLessonRepository.countByEnrollmentId(1L))
+        when(completedLessonRepository.countActiveCompletedLessonsByEnrollmentId(1L))
                 .thenReturn(4L);
 
         when(lessonRepository.countByCourseIdAndDeletedAtIsNull(1L))
@@ -165,7 +165,7 @@ class EnrollmentServiceImplTest {
         when(enrollmentRepository.findById(1L))
                 .thenReturn(Optional.of(enrollment));
 
-        when(completedLessonRepository.countByEnrollmentId(1L))
+        when(completedLessonRepository.countActiveCompletedLessonsByEnrollmentId(1L))
                 .thenReturn(10L);
 
         when(lessonRepository.countByCourseIdAndDeletedAtIsNull(1L))
@@ -182,7 +182,7 @@ class EnrollmentServiceImplTest {
         when(enrollmentRepository.findById(1L))
                 .thenReturn(Optional.of(enrollment));
 
-        when(completedLessonRepository.countByEnrollmentId(1L))
+        when(completedLessonRepository.countActiveCompletedLessonsByEnrollmentId(1L))
                 .thenReturn(0L);
 
         when(lessonRepository.countByCourseIdAndDeletedAtIsNull(1L))
@@ -202,7 +202,7 @@ class EnrollmentServiceImplTest {
         when(lessonRepository.findById(1L))
                 .thenReturn(Optional.of(lesson));
 
-        when(completedLessonRepository.countByEnrollmentId(1L))
+        when(completedLessonRepository.countActiveCompletedLessonsByEnrollmentId(1L))
                 .thenReturn(10L);
 
         when(lessonRepository.countByCourseIdAndDeletedAtIsNull(1L))
