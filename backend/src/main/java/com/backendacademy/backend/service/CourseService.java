@@ -65,14 +65,21 @@ public class CourseService {
     }
 
     /**
-     * Lists all published courses with pagination.
-     * Uses @EntityGraph in the repository to prevent N+1 queries.
+     * Lists all published courses with pagination, search, and difficulty filters.
+     * Delegates to the native FTS query.
      */
-    public PagedResponse<CourseResponse> getAllPublishedCourses(Pageable pageable) {
-        Page<CourseResponse> page = courseRepository
-                .findByStatus(CourseStatus.PUBLISHED, pageable)
-                .map(CourseResponse::fromEntity);
-        return PagedResponse.fromPage(page);
+    public PagedResponse<CourseResponse> getAllPublishedCourses(String search, String level, Pageable pageable) {
+        String safeSearch = (search == null) ? "" : search.trim();
+        String safeLevel = (level == null || level.trim().isEmpty()) ? "ALL" : level.trim().toUpperCase();
+        
+        Page<Course> coursePage = courseRepository.searchPublishedCourses(
+                safeSearch,
+                safeLevel,
+                CourseStatus.PUBLISHED.name(),
+                pageable
+        );
+        
+        return PagedResponse.fromPage(coursePage.map(CourseResponse::fromEntity));
     }
 
     /**
