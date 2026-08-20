@@ -35,8 +35,11 @@ public class CourseController implements CourseApiDocs {
 
     @Override
     @GetMapping
-    public ResponseEntity<PagedResponse<CourseResponse>> getAllCourses(Pageable pageable) {
-        return ResponseEntity.ok(courseService.getAllPublishedCourses(pageable));
+    public ResponseEntity<PagedResponse<CourseResponse>> getAllCourses(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String level,
+            Pageable pageable) {
+        return ResponseEntity.ok(courseService.getAllPublishedCourses(search, level, pageable));
     }
 
     @Override

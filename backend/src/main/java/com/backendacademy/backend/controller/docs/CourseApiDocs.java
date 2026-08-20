@@ -31,11 +31,14 @@ public interface CourseApiDocs {
     ResponseEntity<CourseResponse> createCourse(CreateCourseRequest request, User user);
 
     @Operation(summary = "List all published courses",
-            description = "Returns a paginated list of all published courses. Accessible by any authenticated user.")
+            description = "Returns a paginated list of all published courses, with optional text search and level filtering. Accessible by any authenticated user.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Paginated list of published courses")
     })
-    ResponseEntity<PagedResponse<CourseResponse>> getAllCourses(Pageable pageable);
+    ResponseEntity<PagedResponse<CourseResponse>> getAllCourses(
+            @Parameter(description = "Optional search term for Full-Text Search") String search,
+            @Parameter(description = "Optional difficulty level filter (e.g., 'BEGINNER')") String level,
+            Pageable pageable);
 
     @Operation(summary = "Get a course by ID",
             description = "Returns course details. DRAFT courses are only visible to the owner or an admin; " +
