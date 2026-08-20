@@ -10,7 +10,7 @@ begin
   new.search_vector :=
     to_tsvector('english', coalesce(new.title, '') || ' ' || coalesce(new.description, ''));
   return new;
-end
+end;
 $$ LANGUAGE plpgsql;
 
 -- Create the trigger
