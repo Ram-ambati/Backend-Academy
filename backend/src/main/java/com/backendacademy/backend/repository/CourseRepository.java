@@ -42,5 +42,13 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
         nativeQuery = true
     )
     Page<Course> searchPublishedCourses(@Param("search") String search, @Param("level") String level, @Param("status") String status, Pageable pageable);
+
+    /**
+     * Fallback JPQL query for testing with H2 database which doesn't support Postgres FTS.
+     */
+    @Query("SELECT c FROM Course c WHERE c.status = :status " +
+           "AND (:level IS NULL OR :level = 'ALL' OR CAST(c.difficultyLevel AS string) = :level) " +
+           "AND (:search IS NULL OR :search = '' OR LOWER(c.title) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(c.description) LIKE LOWER(CONCAT('%', :search, '%')))")
+    Page<Course> searchPublishedCoursesFallback(@Param("search") String search, @Param("level") String level, @Param("status") CourseStatus status, Pageable pageable);
 }
 
