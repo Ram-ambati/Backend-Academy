@@ -17,6 +17,6 @@ Backend Academy teaches backend development through structured, project-based le
 - [Dashboard](https://backend-academy.vercel.app/dashboard): Student progress dashboard (authenticated)
 
 ## API
-- Base URL: https://backend-academy-XXXX.onrender.com
+- Base URL: https://backend-academy-tpzc.onrender.com
 - Documentation: /swagger-ui.html
 - Authentication: JWT Bearer tokens
