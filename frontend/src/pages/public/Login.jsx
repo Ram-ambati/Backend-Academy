@@ -21,10 +21,10 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const { token, user } = await login(email, password);
+      const { token, refreshToken, user } = await login(email, password);
       
       // Update Zustand store
-      setAuth(token, user);
+      setAuth(token, user, refreshToken);
       
       addToast({ type: 'success', title: 'Welcome back!', message: `Logged in as ${user.name}` });
 

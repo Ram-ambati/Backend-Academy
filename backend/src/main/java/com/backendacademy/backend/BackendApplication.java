@@ -14,7 +14,7 @@ import java.util.List;
  * The main entry point of the Spring Boot application. 
  * It parses your local .env configuration file and boots up the Spring context.
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = {org.springframework.ai.model.openai.autoconfigure.OpenAiEmbeddingAutoConfiguration.class})
 @EnableAsync
 public class BackendApplication {
 

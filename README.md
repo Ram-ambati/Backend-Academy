@@ -1,296 +1,113 @@
-# Backend Academy
+# 🎓 Backend Academy
 
-**Backend Academy** is an AI-powered learning platform designed to teach modern Java backend development through structured, project-based learning.
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.0-brightgreen.svg?logo=springboot)
+![React](https://img.shields.io/badge/React-18-blue.svg?logo=react)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg?logo=postgresql)
+![AI Enabled](https://img.shields.io/badge/AI-Gemini%20%7C%20Groq-orange)
 
-Unlike traditional platforms that only provide videos and notes, Backend Academy combines:
-- guided weekly modules,
-- practical coding assignments,
-- secure RESTful backend architecture,
-- and an intelligent lesson-aware AI assistant.
+**Backend Academy** is a modern, AI-powered learning platform designed specifically to teach backend development through structured, project-based learning.
 
-The goal is to help learners build real-world backend engineering skills while progressing through an industry-focused curriculum.
-
----
-
-## Abstract
-
-Backend Academy organizes learning into weekly milestones where students move from core backend fundamentals to advanced production topics. Learners study concepts and apply them directly by building software features, APIs, and secure systems.
-
-The integrated AI assistant is context-aware: it understands the lesson a student is currently viewing and provides targeted support such as explanations, code walkthroughs, quiz questions, interview prep, and debugging help.
-
-With Retrieval-Augmented Generation (RAG), responses are grounded in the platform's own lesson content, code snippets, and resources to keep answers relevant, consistent, and educational.
+Unlike traditional platforms that rely solely on passive video lectures, Backend Academy combines guided weekly modules, practical coding assignments, secure RESTful architecture, and a **context-aware AI Tutor** that helps students understand concepts from first principles.
 
 ---
 
-## Core Features (Project Modules)
+## ✨ Key Features
 
-### 1) User Management
-- [x] Student registration
-- [x] Instructor registration
-- [ ] Administrator management
-- [ ] User profiles
-- [ ] Account management
-- [x] Progress tracking
-
-### 2) Authentication & Authorization
-Protect all resources in the application.
-**Roles:** Admin, Instructor, Student
-- [x] Login / Logout
-- [x] JWT authentication
-- [x] Password encryption
-- [x] Role-based authorization
-- [x] Protected endpoints
-
-### 3) Course Management
-Organize and manage learning content.
-- [x] Create, update, delete courses
-- [x] Publish courses
-- [ ] Course categories (Spring Boot, REST APIs, Security, Docker, etc.)
-
-### 4) Weekly Learning Modules
-Structured progression model: `Course -> Week -> Lesson -> Assignment -> Quiz`
-- [ ] Learning objectives
-- [ ] Lesson notes
-- [ ] Code snippets
-- [ ] Resources
-- [ ] Assignments
-
-### 5) Lesson Viewer (Core Experience)
-- [x] Title
-- [x] Optional embedded YouTube video (URL-based, lightweight storage)
-- [x] Markdown notes
-- [x] Java code examples
-- [ ] Resources
-- [x] Navigation
-- [ ] Assignment
-- [ ] AI assistant
-
-### 6) AI Learning Assistant
-Context-aware lesson support (not a generic chatbot). Students can ask:
-- [ ] Explain this topic
-- [ ] Explain this code
-- [ ] Give another example
-- [ ] Quiz me
-- [ ] Generate interview questions
-- [ ] Simplify this concept
-- [ ] Debug my code
-
-### 7) Retrieval-Augmented Generation (RAG)
-Before calling the LLM, the platform retrieves:
-- [ ] Current lesson context
-- [ ] Markdown notes
-- [ ] Code examples
-- [ ] Resources
-
-### 8) Code Snippet Library
-Every lesson includes executable backend examples:
-- [ ] `@RestController`
-- [ ] `@GetMapping`
-- [ ] `@Service`
-- [ ] `@Repository`
-- [ ] Entity mapping examples
-- [ ] JWT and Spring Security examples
-
-### 9) Assignment System
-Hands-on practice after every lesson:
-- [ ] Mini challenge
-- [ ] Assignment task
-- [ ] Expected output
-- [ ] Optional reference solution
-
-### 10) Progress Tracking
-Track learning outcomes in real time.
-- [ ] Completed lessons
-- [ ] Weekly progress
-- [ ] Overall course progress
-
-### 11) Performance Optimization
-- [ ] Caching
-- [ ] Async processing
-- [ ] Structured logging
-- [ ] Monitoring with Actuator
-
-### 12) Testing
-- [x] Unit testing
-- [x] Integration testing
-- [ ] API testing
-
-### 13) Documentation
-- [x] Swagger / OpenAPI
-- [x] API documentation
-- [x] Professional README practices
-
-### 14) Deployment
-- [ ] Docker
-- [ ] Docker Compose
-- [ ] Cloud deployment (Render / Railway)
-- [ ] Frontend deployment (Vercel)
+- 🔐 **Robust Authentication & RBAC**: Secure JWT-based authentication with role-based access control (Admin, Instructor, Student) powered by Spring Security.
+- 📚 **Structured Learning Modules**: Courses organized into weekly modules containing rich Markdown-based lessons, embedded video support, and executable Java code snippets.
+- 🤖 **Integrated AI Tutor**: A built-in AI assistant powered by Spring AI (Gemini primary, Groq fallback) that understands the context of the platform and helps students debug, learn, and test their knowledge.
+- 📈 **Progress Tracking**: Real-time tracking of completed lessons and overall course progress for students.
+- 🎨 **Modern Interface**: A sleek, responsive frontend built with React, featuring a Swayam-inspired UI, smooth animations, and a distraction-free learning environment.
+- 🗄️ **Production-Ready Data Layer**: Powered by PostgreSQL, managed by Flyway migrations, and optimized with Spring Data JPA.
 
 ---
 
-## Learning Objectives (Concepts Learned)
-
-### User Management
-- Entity design
-- DTOs
-- Validation
-- Exception handling
-- CRUD operations
-
-### Authentication & Authorization
-- Spring Security
-- JWT
-- BCrypt
-- Authentication and authorization flow
-- Security filters
-
-### Course Management
-- CRUD APIs
-- Pagination
-- Sorting
-- Layered architecture
-
-### Weekly Learning Modules
-- Relational database design
-- Entity relationships
-
-### Lesson Viewer (Core Experience)
-- Markdown rendering
-- File organization
-- Dynamic content loading
-
-### AI Learning Assistant
-- REST API integration
-- WebClient / RestTemplate
-- Prompt engineering
-- LLM API integration
-
-### Retrieval-Augmented Generation (RAG)
-- Embeddings
-- Vector databases
-- Similarity search
-- Context injection
-- AI retrieval
-
-### Code Snippet Library
-- Code organization
-- Markdown-based example delivery
-
-### Assignment System
-- Practical backend development workflow
-
-### Progress Tracking
-- User progress modeling
-- Database update strategies
-
-### Performance Optimization
-- `@Cacheable`
-- `@Async`
-- Logback
-- Spring Boot Actuator
-
-### Testing
-- JUnit
-- Mockito
-- Test-driven thinking
-
-### Deployment
-- Containerization
-- Production deployment
-- Environment variable management
-
----
-
-## Technologies Covered
+## 🛠️ Technology Stack
 
 ### Backend
-- Java
-- Spring Boot
-- Spring MVC
-- Spring Data JPA
-- Spring Security
-- JWT
-- Hibernate
+- **Java 21** & **Spring Boot 4.1.0**
+- **Spring Security** & **JWT** for Authentication
+- **Spring Data JPA** & **Hibernate**
+- **Spring AI** (Integrating OpenAI-compatible endpoints for Gemini/Groq)
+- **Flyway** for Database Migrations
+- **PostgreSQL** (Hosted on Supabase)
 
-### Database
-- PostgreSQL
-- MySQL
-
-### AI
-- LLM APIs
-- Retrieval-Augmented Generation (RAG)
-- Embeddings
-- Vector search
-
-### Frontend (Minimal)
-- React
-- Vite
-- Axios
-- Markdown rendering
-
-### DevOps & Deployment
-- Docker
-- Docker Compose
-- Render
-- Railway
-- Vercel
+### Frontend
+- **React 18** (Vite)
+- **React Router DOM**
+- **Zustand** (State Management)
+- **Vanilla CSS** (Custom Design System with Glassmorphism)
+- **Lucide React** (Icons)
+- **React Markdown** & **SyntaxHighlighter**
 
 ---
 
-## 🗂️ Project Issues Roadmap (Sprint Planning)
+## 🚀 Getting Started
 
-### 🏗️ Phase 1 — Foundation (10 Issues)
-- [x] 1. Authentication API Contract (`/api/v1/auth/*`)
-- [x] 2. User Role & Permission Matrix (RBAC — `Role` enum, `@PreAuthorize`)
-- [x] 3. User Entity & Database Design (`User.java`, Flyway `V1`, `V2`)
-- [x] 4. Course Entity & Database Design (`Course.java`, Flyway `V3`)
-- [x] 5. Lesson Entity & Database Design
-- [ ] 6. Enrollment Entity & Progress Design
-- [x] 7. API Response Standard (`PagedResponse<T>`, Raw DTO responses)
-- [x] 8. Error Response Standard (`ErrorResponse`, `GlobalExceptionHandler`)
-- [x] 9. API Naming & URL Convention Review (`/api/v1/*` RESTful standards)
-- [x] 10. Swagger/OpenAPI Planning & Setup (`springdoc-openapi`, Swagger UI)
+### Prerequisites
+- **Java 21** installed
+- **Node.js 18+** installed
+- **PostgreSQL** database (Local or Supabase)
+- **Gemini API Key** or **Groq API Key** (for the AI Tutor)
 
-### 📚 Phase 2 — Course Module (6 Issues)
-- [x] 11. Course CRUD Service & Controller (`CourseService`, ownership enforcement)
-- [ ] 12. Lesson CRUD API
-- [ ] 13. Course Search & Filtering
-- [ ] 14. Pagination & Sorting
-- [ ] 15. Markdown Lesson Format
-- [ ] 16. Code Snippet & Resource Structure
+### 1. Clone the Repository
+```bash
+git clone https://github.com/Ram-ambati/Backend-Academy.git
+cd Backend-Academy
+```
 
-### 🔐 Phase 3 — Authentication & Security (5 Issues)
-- [x] 17. JWT Authentication Flow
-- [x] 18. Spring Security Configuration Plan
-- [x] 19. Protected Route Contract
-- [x] 20. Refresh Token Strategy
-- [ ] 21. Password Reset & Email Verification Flow
+### 2. Backend Setup
+Navigate to the `backend` directory and set up your environment variables.
 
-### 🤖 Phase 4 — AI Module (5 Issues)
-- [ ] 22. AI Chat API
-- [ ] 23. RAG Context Flow
-- [ ] 24. Conversation History
-- [ ] 25. Prompt & Response Models
-- [ ] 26. AI Error Handling & Rate Limits
+Create a `.env` file in the `backend` directory:
+```env
+SPRING_DATASOURCE_URL=jdbc:postgresql://<your-db-url>:5432/postgres
+SPRING_DATASOURCE_USERNAME=postgres
+SPRING_DATASOURCE_PASSWORD=your_password
+JWT_SECRET=your_super_secret_jwt_key_that_is_at_least_256_bits
+ADMIN_EMAIL=admin@backendacademy.com
+ADMIN_PASSWORD_HASH=$2a$10$vI8aWNnFlbAaDBbrkwspiuZ.5uQ.fU8YgYQeG.8Qh2j/UxgkKx83m
 
-### 👤 Phase 5 — User Experience (5 Issues)
-- [ ] 27. Dashboard API
-- [ ] 28. User Profile API
-- [ ] 29. Progress Tracking API
-- [ ] 30. Notifications API
-- [ ] 31. Search API
+# AI Configuration (Provide at least one)
+GEMINI_API_KEY=your_gemini_key
+GROQ_API_KEY=your_groq_key
+```
 
-### 🚀 Phase 6 — Platform (5 Issues)
-- [ ] 32. Health & Version Endpoints
-- [ ] 33. File Upload API
-- [ ] 34. Deployment Configuration
-- [ ] 35. API Documentation Review
+Run the Spring Boot application:
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+```
+*Note: The `dev` profile automatically runs the `DatabaseSeeder` to populate initial admin accounts and sample courses.*
 
+### 3. Frontend Setup
+Navigate to the `frontend` directory:
+```bash
+cd frontend
+npm install
+```
 
+Create a `.env` file in the `frontend` directory:
+```env
+VITE_API_BASE_URL=http://localhost:8080/api/v1
+```
+
+Start the Vite development server:
+```bash
+npm run dev
+```
 
 ---
 
-## Tags / Keywords
+## 🏗️ Architecture & Roadmap
 
-`Java` `Spring Boot` `Backend Development` `REST API` `JWT` `Spring Security` `JPA` `Hibernate` `PostgreSQL` `MySQL` `AI Assistant` `LLM` `RAG` `Embeddings` `Vector Search` `EdTech` `Project-Based Learning` `Docker` `Microservices Concepts` `API Testing`
+Backend Academy is built using a strict layered monolithic architecture (Controller -> Service -> Repository).
 
+**Upcoming Features (Phase 2):**
+- **PgVector RAG Implementation**: Enhancing the AI Tutor with Retrieval-Augmented Generation using local ONNX embeddings (`all-MiniLM-L6-v2`) and PostgreSQL's vector extension to query actual lesson content.
+- **Interactive Assignments**: Hands-on coding challenges with expected outputs and reference solutions.
+- **Instructor Dashboard**: Advanced analytics and course creation tools for educators.
+
+---
+
+## 📝 License
+This project is proprietary and built for educational purposes. All rights reserved.

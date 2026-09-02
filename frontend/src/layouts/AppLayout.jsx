@@ -8,17 +8,21 @@ const AppLayout = () => {
   const [sidebarItem, setSidebarItem] = useState('');
   const location = useLocation();
   const isLearningPage = location.pathname.startsWith('/learn');
+  const isAiPage = location.pathname === '/ai-tutor';
+  const isFullScreenPage = isLearningPage || isAiPage;
 
   return (
     <div className="app-shell">
       <Navbar />
       <div className="app-body">
         <Sidebar activeItem={sidebarItem} onItemClick={setSidebarItem} />
-        <main className="app-main" style={{ padding: 0 }}>
-          <Outlet />
+        <main className="app-main" style={{ padding: 0, overflowY: isFullScreenPage ? 'hidden' : 'auto' }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: isFullScreenPage ? 0 : 'auto' }}>
+            <Outlet />
+          </div>
+          {!isFullScreenPage && <Footer />}
         </main>
       </div>
-      {!isLearningPage && <Footer />}
     </div>
   );
 };

@@ -5,12 +5,15 @@ const useAuthStore = create(
   persist(
     (set) => ({
       token: null,
+      refreshToken: null,
       user: null, // { id, name, email, role: 'STUDENT' | 'INSTRUCTOR' | 'ADMIN' }
       isAuthenticated: false,
 
-      login: (token, user) => set({ token, user, isAuthenticated: true }),
+      login: (token, user, refreshToken) => set({ token, refreshToken, user, isAuthenticated: true }),
       
-      logout: () => set({ token: null, user: null, isAuthenticated: false }),
+      setToken: (token) => set({ token }),
+
+      logout: () => set({ token: null, refreshToken: null, user: null, isAuthenticated: false }),
       
       updateUser: (updates) => set((state) => ({
         user: state.user ? { ...state.user, ...updates } : null

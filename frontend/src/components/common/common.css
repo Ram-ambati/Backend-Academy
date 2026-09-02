@@ -247,8 +247,8 @@
    ===================================================== */
 .card {
   background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl); /* Increased to match rounded borders from screenshot */
   box-shadow: var(--shadow-sm);
   overflow: hidden;
   transition: var(--transition);

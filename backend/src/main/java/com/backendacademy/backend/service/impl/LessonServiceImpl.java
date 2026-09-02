@@ -14,6 +14,7 @@ import com.backendacademy.backend.repository.CourseRepository;
 import com.backendacademy.backend.repository.LessonRepository;
 import com.backendacademy.backend.service.EnrollmentService;
 import com.backendacademy.backend.service.LessonService;
+import com.backendacademy.backend.service.AiLearningService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,7 @@ public class LessonServiceImpl implements LessonService {
     private final LessonRepository lessonRepository;
     private final CourseRepository courseRepository;
     private final EnrollmentService enrollmentService;
+    private final AiLearningService aiLearningService;
 
     @Override
     public LessonResponse createLesson(Long courseId, CreateLessonRequest request, User currentUser) {
@@ -54,6 +56,14 @@ public class LessonServiceImpl implements LessonService {
                 .build();
 
         Lesson saved = lessonRepository.save(lesson);
+        
+        try {
+            aiLearningService.embedLesson(saved);
+        } catch (Exception e) {
+            // Log but don't fail the transaction if embedding fails
+            System.err.println("Failed to embed lesson: " + e.getMessage());
+        }
+        
         return LessonResponse.fromEntity(saved);
     }
 
@@ -103,6 +113,14 @@ public class LessonServiceImpl implements LessonService {
         }
 
         Lesson saved = lessonRepository.save(lesson);
+        
+        try {
+            aiLearningService.deleteLessonEmbeddings(saved.getId());
+            aiLearningService.embedLesson(saved);
+        } catch (Exception e) {
+            System.err.println("Failed to re-embed lesson: " + e.getMessage());
+        }
+        
         return LessonResponse.fromEntity(saved);
     }
 
@@ -115,6 +133,12 @@ public class LessonServiceImpl implements LessonService {
 
         lesson.setDeletedAt(Instant.now());
         lessonRepository.save(lesson);
+
+        try {
+            aiLearningService.deleteLessonEmbeddings(id);
+        } catch (Exception e) {
+            System.err.println("Failed to delete lesson embeddings: " + e.getMessage());
+        }
 
         // Recalculate progress for all active enrollments since total active lessons dropped
         enrollmentService.recalculateProgressForCourse(lesson.getCourse().getId());

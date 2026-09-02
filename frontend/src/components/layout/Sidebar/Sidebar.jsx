@@ -15,7 +15,8 @@ import {
   ChevronRight,
   LogOut,
   ShieldAlert,
-  PlayCircle
+  PlayCircle,
+  Plus
 } from 'lucide-react';
 import useAuthStore from '../../../stores/useAuthStore';
 import Modal from '../../common/Modal/Modal';
@@ -37,6 +38,17 @@ const Sidebar = () => {
   const [currentLessons, setCurrentLessons] = useState([]);
 
   const sidebarFooterRef = useRef(null);
+
+  useEffect(() => {
+    const handleAutoCollapse = () => setCollapsed(true);
+    const handleAutoOpen = () => setCollapsed(false);
+    window.addEventListener('autoCollapseSidebar', handleAutoCollapse);
+    window.addEventListener('autoOpenSidebar', handleAutoOpen);
+    return () => {
+      window.removeEventListener('autoCollapseSidebar', handleAutoCollapse);
+      window.removeEventListener('autoOpenSidebar', handleAutoOpen);
+    };
+  }, []);
 
   /* Close profile card when clicking outside */
   useEffect(() => {
@@ -100,6 +112,14 @@ const Sidebar = () => {
     { icon: TrendingUp, label: 'Progress', path: '/progress' },
   ];
 
+  const isAiPage = location.pathname === '/ai-tutor';
+
+  const recentChats = [
+    { id: 1, title: 'Spring Security Filter Chains' },
+    { id: 2, title: 'B-Tree vs Hash Indexes' },
+    { id: 3, title: 'Microservices Architecture' }
+  ];
+
   return (
     <>
       <aside className={`sidebar${collapsed ? ' collapsed' : ''}`}>
@@ -115,59 +135,93 @@ const Sidebar = () => {
           </button>
         </div>
 
-        {/* Section 1: Getting Started */}
-        <div className="sidebar-section">
-          <div className="sidebar-section-label">Getting Started</div>
-          {gettingStartedItems.map((item) => (
-            <NavLink
-              key={item.label}
-              to={item.path}
-              className={({ isActive }) => `sidebar-nav-item${isActive ? ' active' : ''}`}
-              title={collapsed ? item.label : undefined}
-            >
-              <span className="sidebar-nav-icon"><item.icon size={16} /></span>
-              <span className="sidebar-nav-label">{item.label}</span>
-            </NavLink>
-          ))}
-          <div className="sidebar-divider" />
-        </div>
-
-        {/* Section 2: Current Course (Dynamic) */}
-        {currentCourseId && currentLessons.length > 0 && (
+        {/* Main Content (Scrollable) */}
+        <div className="sidebar-content">
+          {/* Section 1: Getting Started */}
           <div className="sidebar-section">
-            <div className="sidebar-section-label">Course Lessons</div>
-            {currentLessons.map((lesson) => (
+            <div className="sidebar-section-label">Getting Started</div>
+            {gettingStartedItems.map((item) => (
               <NavLink
-                key={lesson.id}
-                to={`/learn/${currentCourseId}/${lesson.id}`}
-                className={({ isActive }) => `sidebar-nav-item${isActive ? ' active' : ''}`}
-                title={collapsed ? lesson.title : undefined}
+                key={item.label}
+                to={item.path}
+                className={({ isActive }) => `sidebar-nav-item${isActive && !isAiPage ? ' active' : ''}`}
+                title={collapsed ? item.label : undefined}
               >
-                <span className="sidebar-nav-icon"><PlayCircle size={16} /></span>
-                <span className="sidebar-nav-label" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {lesson.title}
-                </span>
+                <span className="sidebar-nav-icon"><item.icon size={16} /></span>
+                <span className="sidebar-nav-label">{item.label}</span>
               </NavLink>
             ))}
             <div className="sidebar-divider" />
           </div>
-        )}
 
-        {/* Section 3: Explore */}
-        <div className="sidebar-section">
-          <div className="sidebar-section-label">Explore</div>
-          {exploreItems.map((item) => (
-            <NavLink
-              key={item.label}
-              to={item.path}
-              className={({ isActive }) => `sidebar-nav-item${isActive ? ' active' : ''}`}
-              title={collapsed ? item.label : undefined}
-            >
-              <span className="sidebar-nav-icon"><item.icon size={16} /></span>
-              <span className="sidebar-nav-label">{item.label}</span>
-            </NavLink>
-          ))}
-          <div className="sidebar-divider" />
+          {/* Section 2: Current Course (Dynamic) */}
+          {!isAiPage && currentCourseId && currentLessons.length > 0 && (
+            <div className="sidebar-section">
+              <div className="sidebar-section-label">Course Lessons</div>
+              {currentLessons.map((lesson) => (
+                <NavLink
+                  key={lesson.id}
+                  to={`/learn/${currentCourseId}/${lesson.id}`}
+                  className={({ isActive }) => `sidebar-nav-item${isActive ? ' active' : ''}`}
+                  title={collapsed ? lesson.title : undefined}
+                >
+                  <span className="sidebar-nav-icon"><PlayCircle size={16} /></span>
+                  <span className="sidebar-nav-label" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {lesson.title}
+                  </span>
+                </NavLink>
+              ))}
+              <div className="sidebar-divider" />
+            </div>
+          )}
+
+          {/* Section 2b: Recent Chats (Dynamic for AI Page) */}
+          {isAiPage && (
+            <div className="sidebar-section">
+              <div
+                className="sidebar-nav-item"
+                onClick={() => window.dispatchEvent(new CustomEvent('clearAiChat'))}
+                style={{ cursor: 'pointer', marginBottom: '1.5rem', backgroundColor: 'var(--bg-hover)' }}
+                title={collapsed ? "New chat" : undefined}
+              >
+                <span className="sidebar-nav-icon"><Plus size={16} /></span>
+                <span className="sidebar-nav-label">New chat</span>
+              </div>
+              <div className="sidebar-section-label">Recent Chats</div>
+              {recentChats.map((chat) => (
+                <div
+                  key={chat.id}
+                  className="sidebar-nav-item"
+                  title={collapsed ? chat.title : undefined}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <span className="sidebar-nav-icon"><Bot size={16} /></span>
+                  <span className="sidebar-nav-label" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {chat.title}
+                  </span>
+                </div>
+              ))}
+              <div className="sidebar-divider" />
+            </div>
+          )}
+
+          {/* Section 3: Explore */}
+          {!isAiPage && (
+            <div className="sidebar-section">
+              <div className="sidebar-section-label">Explore</div>
+              {exploreItems.map((item) => (
+                <NavLink
+                  key={item.label}
+                  to={item.path}
+                  className={({ isActive }) => `sidebar-nav-item${isActive ? ' active' : ''}`}
+                  title={collapsed ? item.label : undefined}
+                >
+                  <span className="sidebar-nav-icon"><item.icon size={16} /></span>
+                  <span className="sidebar-nav-label">{item.label}</span>
+                </NavLink>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* User Profile Footer — Clicking opens same Profile Card */}

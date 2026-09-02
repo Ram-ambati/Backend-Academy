@@ -22,8 +22,8 @@ const RegisterStudent = () => {
     setIsLoading(true);
 
     try {
-      const { token, user } = await registerStudent(formData);
-      setAuth(token, user);
+      const { token, refreshToken, user } = await registerStudent(formData);
+      setAuth(token, user, refreshToken);
       addToast({ type: 'success', title: 'Registration Successful', message: `Welcome to Backend Academy!` });
       navigate('/courses'); // Student lands on courses catalog
     } catch (err) {

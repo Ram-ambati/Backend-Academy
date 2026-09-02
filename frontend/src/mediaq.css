@@ -1,10 +1,10 @@
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   .navbar-links { display: none; }
   .navbar-mobile-toggle { display: flex; }
   .navbar-brand-name { font-size: 1rem; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   .sidebar {
     position: fixed;
     left: -260px;
@@ -15,7 +15,7 @@
   .sidebar.open { left: 0; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .footer-bottom { flex-direction: column; text-align: center; }
 }
@@ -24,7 +24,7 @@
   .footer-grid { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   .landing-hero-title {
     font-size: 2.25rem;
   }

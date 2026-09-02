@@ -4,8 +4,6 @@ import { Send, Loader2 } from 'lucide-react';
 const SUGGESTIONS = [
   'Explain this concept',
   'Show me an example',
-  'Why does this work?',
-  'What are best practices?',
 ];
 
 const PromptBox = ({
@@ -84,7 +82,7 @@ const PromptBox = ({
           </button>
         </div>
       </div>
-      <div className="prompt-box-hint">Enter to send · Shift+Enter for new line</div>
+      <div className="prompt-box-hint">Nexus is AI and can make mistakes.</div>
     </div>
   );
 };

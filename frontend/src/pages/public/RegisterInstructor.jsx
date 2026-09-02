@@ -22,8 +22,8 @@ const RegisterInstructor = () => {
     setIsLoading(true);
 
     try {
-      const { token, user } = await registerInstructor(formData);
-      setAuth(token, user);
+      const { token, refreshToken, user } = await registerInstructor(formData);
+      setAuth(token, user, refreshToken);
       addToast({ type: 'success', title: 'Registration Successful', message: `Welcome to the Faculty!` });
       navigate('/instructor'); // Instructor lands on their dashboard
     } catch (err) {

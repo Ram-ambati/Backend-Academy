@@ -39,6 +39,7 @@ const ProgressTracker = lazy(() => import('./pages/student/ProgressTracker'));
 // Instructor
 const InstructorDashboard = lazy(() => import('./pages/instructor/InstructorDashboard'));
 const CourseBuilder = lazy(() => import('./pages/instructor/CourseBuilder'));
+const LessonBuilder = lazy(() => import('./pages/instructor/LessonBuilder'));
 
 // Admin
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
@@ -93,6 +94,8 @@ export default function App() {
                 <Route path="/instructor" element={<InstructorDashboard />} />
                 <Route path="/instructor/courses/new" element={<CourseBuilder />} />
                 <Route path="/instructor/courses/:id/edit" element={<CourseBuilder />} />
+                <Route path="/instructor/courses/:courseId/lessons/new" element={<LessonBuilder />} />
+                <Route path="/instructor/courses/:courseId/lessons/:lessonId/edit" element={<LessonBuilder />} />
               </Route>
             </Route>
 
