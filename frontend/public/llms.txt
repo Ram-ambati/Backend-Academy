@@ -1,0 +1,22 @@
+# Backend Academy
+> A modern, AI-powered learning platform for backend development.
+
+## About
+Backend Academy teaches backend development through structured, project-based learning. It features an integrated AI Tutor powered by Retrieval-Augmented Generation (RAG) with Gemini and Groq LLMs.
+
+## Tech Stack
+- Backend: Java 21, Spring Boot 4.1.0, Spring Security, Spring AI, Flyway, PostgreSQL (Supabase), PgVector
+- Frontend: React 19, Vite, Zustand, React Router, Vanilla CSS
+- AI: Gemini (Primary), Groq (Fallback), ONNX local embeddings (all-MiniLM-L6-v2)
+
+## Pages
+- [Home](https://backend-academy.vercel.app/): Landing page with featured courses
+- [Login](https://backend-academy.vercel.app/auth/login): Student and instructor authentication
+- [Register](https://backend-academy.vercel.app/auth/register): Create a new account
+- [Courses](https://backend-academy.vercel.app/courses): Browse all published courses
+- [Dashboard](https://backend-academy.vercel.app/dashboard): Student progress dashboard (authenticated)
+
+## API
+- Base URL: https://backend-academy-XXXX.onrender.com
+- Documentation: /swagger-ui.html
+- Authentication: JWT Bearer tokens

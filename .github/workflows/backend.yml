@@ -38,3 +38,6 @@ jobs:
 
       - name: Run Tests
         run: ./mvnw test
+
+      - name: Build Docker Image
+        run: docker build -t backend-academy-backend .

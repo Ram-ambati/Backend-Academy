@@ -102,10 +102,31 @@ npm run dev
 
 Backend Academy is built using a strict layered monolithic architecture (Controller -> Service -> Repository).
 
-**Upcoming Features (Phase 2):**
+**Completed Features (Phase 2):**
 - **PgVector RAG Implementation**: Enhancing the AI Tutor with Retrieval-Augmented Generation using local ONNX embeddings (`all-MiniLM-L6-v2`) and PostgreSQL's vector extension to query actual lesson content.
+
+**Upcoming Features (Phase 3):**
 - **Interactive Assignments**: Hands-on coding challenges with expected outputs and reference solutions.
 - **Instructor Dashboard**: Advanced analytics and course creation tools for educators.
+
+---
+
+## 🚀 Deployment
+
+The project is configured for a modern cloud deployment architecture:
+
+### Frontend (Vercel)
+The React SPA is optimized for Vercel deployment.
+1. Connect your GitHub repository to Vercel.
+2. Select the `frontend` root directory and the Vite framework preset.
+3. Add the `VITE_API_URL` environment variable pointing to your backend URL.
+
+### Backend (Render)
+The Spring Boot application includes a multi-stage `Dockerfile` optimized for Render.
+1. Create a new Web Service on Render and connect your repository.
+2. Select `Docker` as the environment and `./backend` as the Root Directory.
+3. Configure your environment variables (Database credentials, JWT secret, AI API keys).
+4. Render will automatically map the `PORT` variable to the Spring Boot application.
 
 ---
 
