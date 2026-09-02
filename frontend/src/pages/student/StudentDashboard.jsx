@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getStudentEnrollments } from '../../api/course.api';
+import { getMyEnrollments } from '../../api/enrollment.api';
 import useAuthStore from '../../stores/useAuthStore';
 import { BookOpen, CheckCircle, Clock, Flame, Play, RotateCcw, ArrowRight } from 'lucide-react';
 
@@ -23,7 +23,7 @@ const StudentDashboard = () => {
     isLoading,
   } = useQuery({
     queryKey: ['studentEnrollments'],
-    queryFn: getStudentEnrollments,
+    queryFn: getMyEnrollments,
     staleTime: 1000 * 60 * 5,
   });
 
@@ -35,8 +35,8 @@ const StudentDashboard = () => {
     );
   }
 
-  const completedCount = enrollments.filter(e => e.progress === 100).length;
-  const inProgressCount = enrollments.filter(e => e.progress > 0 && e.progress < 100).length;
+  const completedCount = enrollments.filter(e => e.progressPercentage === 100).length;
+  const inProgressCount = enrollments.filter(e => e.progressPercentage > 0 && e.progressPercentage < 100).length;
 
   return (
     <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
@@ -112,54 +112,57 @@ const StudentDashboard = () => {
         ) : (
           /* Step 3: Enrolled Course Cards Grid */
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' }}>
-            {enrollments.map((course) => {
-              const isCompleted = course.progress === 100;
+            {enrollments.map((enrollment) => {
+              const isCompleted = enrollment.progressPercentage === 100;
               return (
-                <div key={course.id} style={{ display: 'flex', flexDirection: 'column' }}>
-                  <Card hoverable={true} style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                    {/* Header bar / Badge */}
-                    <div style={{ padding: '1rem 1.25rem 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Badge variant={isCompleted ? 'green' : 'gold'}>
-                        {course.category}
-                      </Badge>
-                      <Badge variant={isCompleted ? 'solid-green' : 'gold'}>
-                        {isCompleted ? 'Completed' : `${course.progress}% Completed`}
-                      </Badge>
+                <div key={enrollment.id} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <Card hoverable={true} style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: 0 }}>
+                    {/* Thumbnail */}
+                    <div style={{ height: '160px', width: '100%', background: 'var(--bg-muted)', borderTopLeftRadius: 'var(--radius-xl)', borderTopRightRadius: 'var(--radius-xl)', overflow: 'hidden', position: 'relative' }}>
+                      {enrollment.courseThumbnailUrl ? (
+                        <img src={enrollment.courseThumbnailUrl} alt={enrollment.courseTitle} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-light)' }}>
+                          <BookOpen size={48} opacity={0.2} />
+                        </div>
+                      )}
+                      <div style={{ position: 'absolute', top: '1rem', right: '1rem' }}>
+                        <Badge variant={isCompleted ? 'solid-green' : 'gold'}>
+                          {isCompleted ? 'Completed' : `${Math.round(enrollment.progressPercentage)}% Completed`}
+                        </Badge>
+                      </div>
                     </div>
 
                     {/* Card Content */}
-                    <div style={{ padding: '1rem 1.25rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                      <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--text-dark)', margin: 0 }}>
-                        {course.title}
+                    <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                      <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--text-dark)', margin: 0, lineHeight: 1.4 }}>
+                        {enrollment.courseTitle}
                       </h3>
-                      <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', lineHeight: 1.5, margin: 0 }}>
-                        {course.description}
-                      </p>
 
                       {/* Progress Bar */}
                       <div style={{ marginTop: 'auto', paddingTop: '0.75rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
                           <span>Progress</span>
                           <span style={{ fontWeight: 700, color: isCompleted ? 'var(--green)' : 'var(--gold-hover)' }}>
-                            {course.progress}%
+                            {Math.round(enrollment.progressPercentage)}%
                           </span>
                         </div>
                         <div className="progress-bar-track progress-bar-track--sm">
                           <div
                             className={`progress-bar-fill progress-bar-fill--${isCompleted ? 'green' : 'gold'}`}
-                            style={{ width: `${course.progress}%` }}
+                            style={{ width: `${enrollment.progressPercentage}%` }}
                           />
                         </div>
                       </div>
                     </div>
 
                     {/* Action Footer */}
-                    <div style={{ padding: '0.875rem 1.25rem', borderTop: '1px solid var(--border)', background: 'var(--bg-soft)', display: 'flex', justifyContent: 'flex-end' }}>
+                    <div style={{ padding: '0.875rem 1.25rem', borderTop: '1px solid var(--border-light)', background: 'var(--bg-soft)', display: 'flex', justifyContent: 'flex-end', borderBottomLeftRadius: 'var(--radius-xl)', borderBottomRightRadius: 'var(--radius-xl)' }}>
                       {isCompleted ? (
                         <Button
                           variant="outline-green"
                           size="sm"
-                          onClick={() => navigate(`/learn/${course.id}/1`)}
+                          onClick={() => navigate(`/learn/${enrollment.courseId}/1`)}
                         >
                           <RotateCcw size={14} /> Review Course
                         </Button>
@@ -167,7 +170,7 @@ const StudentDashboard = () => {
                         <Button
                           variant="primary"
                           size="sm"
-                          onClick={() => navigate(`/learn/${course.id}/1`)}
+                          onClick={() => navigate(`/learn/${enrollment.courseId}/1`)}
                         >
                           <Play size={14} /> Resume Course
                         </Button>

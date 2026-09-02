@@ -186,10 +186,10 @@ const AuthPage = () => {
         result = await login(cleanEmail, form.password);
       }
 
-      const { token, user } = result;
+      const { token, refreshToken, user } = result;
 
       // ── Auth Handoff: Zustand → Router ──
-      setAuth(token, user);
+      setAuth(token, user, refreshToken);
 
       addToast({
         type: 'success',

@@ -81,15 +81,6 @@ export const getFeaturedCourses = async () => {
   return (response.data.content || []).map(adaptCourse);
 };
 
-/**
- * Student Enrollments API
- * In production: GET /api/v1/students/me/enrollments
- * Currently mocked to return an empty array until enrollments API is built.
- */
-export const getStudentEnrollments = async () => {
-  // For now, return empty until the real enrollments backend endpoint exists
-  return [];
-};
 
 /**
  * Instructor API — Get courses owned by the current instructor

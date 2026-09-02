@@ -9,11 +9,13 @@ import Button from '../../components/common/Button/Button';
 import Card from '../../components/common/Card/Card';
 import Badge from '../../components/common/Badge/Badge';
 import { useToast } from '../../components/common/Toast/Toast';
+import useAuthStore from '../../stores/useAuthStore';
 
 const CourseDetail = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const user = useAuthStore(state => state.user);
   
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
@@ -114,9 +116,15 @@ const CourseDetail = () => {
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><Star size={16} fill="currentColor" color="var(--gold)" /> {course.rating} / 5.0</span>
             </div>
             
-            <Button variant="primary" size="lg" onClick={handleStartLearning} disabled={isEnrolling || lessons.length === 0}>
-              {isEnrolling ? 'Enrolling...' : (lessons.length === 0 ? 'No lessons yet' : 'Start Learning')}
-            </Button>
+            {user?.role === 'INSTRUCTOR' && user?.id === course.instructorId ? (
+              <Button variant="primary" size="lg" onClick={() => navigate(`/instructor/courses/${course.id}/edit`)}>
+                Edit Course & Lessons
+              </Button>
+            ) : (
+              <Button variant="primary" size="lg" onClick={handleStartLearning} disabled={isEnrolling || lessons.length === 0}>
+                {isEnrolling ? 'Enrolling...' : (lessons.length === 0 ? 'No lessons yet' : 'Start Learning')}
+              </Button>
+            )}
           </div>
         </div>
       </Card>

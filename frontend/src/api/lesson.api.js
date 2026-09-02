@@ -29,3 +29,12 @@ export const createLesson = async (courseId, lessonData) => {
   const response = await api.post(`/api/v1/courses/${courseId}/lessons`, lessonData);
   return adaptLesson(response.data);
 };
+
+export const updateLesson = async (lessonId, lessonData) => {
+  const response = await api.put(`/api/v1/lessons/${lessonId}`, lessonData);
+  return adaptLesson(response.data);
+};
+
+export const deleteLesson = async (lessonId) => {
+  await api.delete(`/api/v1/lessons/${lessonId}`);
+};

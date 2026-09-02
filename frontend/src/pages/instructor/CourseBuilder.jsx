@@ -7,6 +7,8 @@ import Input from '../../components/common/Input/Input';
 import Button from '../../components/common/Button/Button';
 import Loader from '../../components/common/Loader/Loader';
 import { getCourseById, createCourse, updateCourse } from '../../api/course.api';
+import { getCourseLessons } from '../../api/lesson.api';
+import LessonList from '../../components/course/LessonList/LessonList';
 
 const CourseBuilder = () => {
   const navigate = useNavigate();
@@ -40,6 +42,13 @@ const CourseBuilder = () => {
   const { data: existingCourse, isLoading: isFetching } = useQuery({
     queryKey: ['course', id],
     queryFn: () => getCourseById(id),
+    enabled: isEditMode
+  });
+
+  // Fetch lessons for this course if in edit mode
+  const { data: lessons, isLoading: isLessonsLoading } = useQuery({
+    queryKey: ['courseLessons', id],
+    queryFn: () => getCourseLessons(id),
     enabled: isEditMode
   });
 
@@ -179,6 +188,32 @@ const CourseBuilder = () => {
           </div>
         </form>
       </Card>
+
+      {isEditMode && (
+        <div style={{ marginTop: '3rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-dark)' }}>Course Lessons</h2>
+            <Button variant="primary" size="sm" onClick={() => navigate(`/instructor/courses/${id}/lessons/new`)}>
+              + Add Lesson
+            </Button>
+          </div>
+          
+          <Card>
+            {isLessonsLoading ? (
+              <div style={{ padding: '2rem' }}><Loader rows={1} /></div>
+            ) : (!lessons || lessons.length === 0) ? (
+              <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-gray)' }}>
+                No lessons added yet. Create one to get started!
+              </div>
+            ) : (
+              <LessonList 
+                lessons={lessons.map(l => ({ ...l, status: 'active' }))} 
+                onLessonClick={(lesson) => navigate(`/instructor/courses/${id}/lessons/${lesson.id}/edit`)}
+              />
+            )}
+          </Card>
+        </div>
+      )}
     </div>
   );
 };
