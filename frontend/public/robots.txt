@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://backend-academy.vercel.app/sitemap.xml
+Sitemap: https://backend-academy-one.vercel.app/sitemap.xml

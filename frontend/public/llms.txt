@@ -10,11 +10,11 @@ Backend Academy teaches backend development through structured, project-based le
 - AI: Gemini (Primary), Groq (Fallback), ONNX local embeddings (all-MiniLM-L6-v2)
 
 ## Pages
-- [Home](https://backend-academy.vercel.app/): Landing page with featured courses
-- [Login](https://backend-academy.vercel.app/auth/login): Student and instructor authentication
-- [Register](https://backend-academy.vercel.app/auth/register): Create a new account
-- [Courses](https://backend-academy.vercel.app/courses): Browse all published courses
-- [Dashboard](https://backend-academy.vercel.app/dashboard): Student progress dashboard (authenticated)
+- [Home](https://backend-academy-one.vercel.app/): Landing page with featured courses
+- [Login](https://backend-academy-one.vercel.app/auth/login): Student and instructor authentication
+- [Register](https://backend-academy-one.vercel.app/auth/register): Create a new account
+- [Courses](https://backend-academy-one.vercel.app/courses): Browse all published courses
+- [Dashboard](https://backend-academy-one.vercel.app/dashboard): Student progress dashboard (authenticated)
 
 ## API
 - Base URL: https://backend-academy-tpzc.onrender.com
