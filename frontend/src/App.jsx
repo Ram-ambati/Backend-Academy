@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { ToastProvider } from './components/common/Toast/Toast';
 import Loader from './components/common/Loader/Loader';
 import ProtectedRoute from './components/layout/ProtectedRoute/ProtectedRoute';
@@ -55,6 +56,7 @@ const PageLoader = () => (
 export default function App() {
   return (
     <ToastProvider>
+      <SpeedInsights />
       <BrowserRouter>
         <Suspense fallback={<PageLoader />}>
           <Routes>
